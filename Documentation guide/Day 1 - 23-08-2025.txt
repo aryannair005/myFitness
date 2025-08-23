@@ -2,13 +2,15 @@
 
 ##  Project Overview
 
-**Fitness Tracker** is a full-stack web application built for creating, managing, and tracking workout routines. The app allows users to create custom workout splits, add exercises with detailed parameters, and use an interactive timer during workouts.
+**Fitness Tracker** is a full-stack web application built for creating, managing, and tracking workout routines with integrated calorie management. The app allows users to create custom workout splits, add exercises with detailed parameters, use an interactive timer during workouts, and calculate personalized daily calorie needs for different fitness goals.
 
 ###  Key Features
 - User authentication (registration, login, logout)
 - Create custom workout splits with multiple exercises
 - Exercise autocomplete with suggested common exercises
 - Interactive workout timer with rest periods
+- **NEW: Calorie maintenance calculator with BMR and TDEE calculations**
+- **NEW: Personalized calorie targets for weight loss, maintenance, and muscle gain**
 - Progress tracking and workout history
 - Responsive design for mobile and desktop
 
@@ -38,13 +40,18 @@ fitness-tracker/
 ├── .env                   # Environment variables
 ├── models/
 │   ├── User.js           # User schema with auth methods
-│   └── Workout.js        # Workout and exercise schemas
+│   ├── Workout.js        # Workout and exercise schemas
+│   └── CalorieProfile.js # NEW: User calorie profile and calculations
 ├── routes/
 │   ├── auth.js           # Authentication routes
-│   └── workouts.js       # Workout CRUD operations
+│   ├── workouts.js       # Workout CRUD operations
+│   └── calories.js       # NEW: Calorie calculator routes
 ├── views/
 │   ├── auth/             # Login and registration pages
-│   └── workouts/         # Workout management pages
+│   ├── workouts/         # Workout management pages
+│   └── calories/         # NEW: Calorie calculator pages
+│       ├── calculator.ejs
+│       └── results.ejs
 └── public/
     ├── css/style.css     # Custom styling
     └── js/               # Client-side JavaScript
@@ -85,6 +92,24 @@ fitness-tracker/
   reps: Number (default: 10),
   weight: Number (default: 0),
   restTime: Number (default: 60 seconds)
+}
+```
+
+### **NEW: CalorieProfile Model**
+```javascript
+{
+  userId: ObjectId (ref: User, unique),
+  age: Number (13-120),
+  gender: String (enum: ['male', 'female']),
+  height: Number (100-250 cm),
+  weight: Number (30-300 kg),
+  activityLevel: String (enum: activity levels),
+  bmr: Number (calculated),
+  maintenanceCalories: Number (calculated),
+  deficitCalories: Number (calculated),
+  surplusCalories: Number (calculated),
+  lastCalculated: Date,
+  createdAt: Date
 }
 ```
 
@@ -136,6 +161,32 @@ The timer system is the most complex feature with multiple states:
 - **Start/Complete**: Launch timer or mark as completed
 - **Delete**: Remove unwanted workouts with confirmation
 
+### **4. NEW: Calorie Calculator System**
+The calorie calculator provides science-based nutrition guidance:
+
+#### Calculation Engine
+- **BMR Calculation**: Uses Mifflin-St Jeor equation for accuracy
+  - Male: BMR = (10 × weight) + (6.25 × height) - (5 × age) + 5
+  - Female: BMR = (10 × weight) + (6.25 × height) - (5 × age) - 161
+- **TDEE Calculation**: BMR × Activity Factor
+- **Activity Multipliers**:
+  - Sedentary: 1.2x (little/no exercise)
+  - Lightly Active: 1.375x (light exercise 1-3 days/week)
+  - Moderately Active: 1.55x (moderate exercise 3-5 days/week)
+  - Very Active: 1.725x (hard exercise 6-7 days/week)
+  - Extra Active: 1.9x (very hard exercise + physical job)
+
+#### Calorie Targets
+- **Maintenance**: TDEE (maintain current weight)
+- **Weight Loss**: TDEE - 500 calories (≈0.5kg/week loss)
+- **Muscle Gain**: TDEE + 300 calories (lean muscle growth)
+
+#### User Features
+- **Profile Management**: Save and update user metrics
+- **Quick Weight Updates**: Recalculate when weight changes
+- **Goal-Specific Advice**: Tips for each calorie target
+- **Progress Tracking**: BMI calculation and profile history
+
 ---
 
 ##  Frontend Architecture
@@ -166,6 +217,7 @@ Manages the complex workout timer functionality:
 - **Component Styling**: Cards, buttons, forms with custom touches
 - **Responsive Design**: Mobile-first approach with breakpoints
 - **Interactive Elements**: Hover effects, transitions, visual feedback
+- **NEW: Calorie UI Styling**: Custom activity selection, result cards, color-coded goals
 
 ---
 
@@ -187,6 +239,12 @@ Manages the complex workout timer functionality:
 - `POST /workouts/:id/complete` - Mark workout as completed
 - `POST /workouts/:id/delete` - Remove workout
 
+### **NEW: Calorie Routes (`/calories`)**
+- `GET /calories` - Calorie calculator form
+- `POST /calories/calculate` - Calculate and save calorie profile
+- `GET /calories/results` - View saved calorie results
+- `POST /calories/update` - Update weight and recalculate
+
 ---
 
 ##  Configuration & Setup
@@ -206,7 +264,8 @@ PORT=3000
   "ejs": "^3.1.9",             // Templating engine
   "express-session": "^1.17.3", // Session management
   "bcryptjs": "^2.4.3",        // Password hashing
-  "dotenv": "^16.3.1"          // Environment variables
+  "dotenv": "^16.3.1",         // Environment variables
+  "ejs-mate": "^4.0.0"         // EJS layout support
 }
 ```
 
@@ -214,7 +273,9 @@ PORT=3000
 1. `npm install` - Install dependencies
 2. Set up MongoDB (local or cloud)
 3. Create `.env` file with configuration
-4. `npm run dev` - Start development server
+4. Create `views/calories/` directory
+5. Add calorie calculator files
+6. `npm run dev` - Start development server
 
 ---
 
@@ -237,16 +298,25 @@ The workout timer manages multiple concurrent states:
 - Visual progress indicators
 - State persistence for pause/resume
 
-### 4. Responsive Design
+### **4. NEW: Calorie Calculation System**
+- **Scientific Accuracy**: Uses peer-reviewed Mifflin-St Jeor equation
+- **Activity Integration**: Comprehensive activity level assessment
+- **Goal-Based Targets**: Realistic calorie adjustments for different goals
+- **Profile Persistence**: Save and update user data over time
+- **Input Validation**: Client and server-side validation for all metrics
+
+### 5. Responsive Design
 - Mobile-first CSS approach
 - Bootstrap grid system for layout
 - Custom media queries for timer display
 - Touch-friendly button sizing
+- **NEW**: Responsive calorie calculator with mobile-optimized input forms
 
-### 5. Data Validation
+### 6. Data Validation
 - Client-side: HTML5 form validation + JavaScript
-- Server-side: Mongoose schema validation
+- Server-side: Mongoose schema validation + custom checks
 - User feedback: Error messages and success indicators
+- **NEW**: Comprehensive validation for calorie profile data (age, weight, height ranges)
 
 ---
 
@@ -256,19 +326,30 @@ The workout timer manages multiple concurrent states:
 - **Loading States**: Button states during form submission
 - **Progress Indicators**: Workout completion progress bar
 - **Status Badges**: Completed/active workout indicators
-- **Color Coding**: Success (green), warning (yellow), danger (red)
+- **Color Coding**: Success (green), warning (yellow), danger (red), info (blue)
+- **NEW**: Color-coded calorie goals with emoji indicators
 
 ### Interactive Elements
 - **Hover Effects**: Cards lift slightly on hover
 - **Smooth Transitions**: CSS transitions for state changes
 - **Real-time Updates**: Timer updates every second
 - **Confirmation Dialogs**: Delete confirmations prevent accidents
+- **NEW**: Interactive activity level selection with descriptions
 
 ### Mobile Optimization
 - **Responsive Timer**: Large, readable timer display on mobile
 - **Touch Targets**: Appropriately sized buttons for touch
 - **Compact Navigation**: Collapsible navbar on small screens
 - **Stack Layout**: Single-column layout on mobile devices
+- **NEW**: Mobile-friendly calorie calculator with optimized form inputs
+
+### **NEW: Calorie Calculator UX**
+- **Intuitive Input Flow**: Logical progression through form sections
+- **Visual Activity Guide**: Clear descriptions for each activity level
+- **Instant Results**: Immediate calculation and display
+- **Goal Explanation**: Clear explanations for each calorie target
+- **Quick Updates**: One-click weight updates for returning users
+- **Educational Content**: Tips and recommendations for each goal
 
 ---
 
@@ -281,28 +362,56 @@ The workout timer manages multiple concurrent states:
 - [ ] Timer start, pause, resume, reset operations
 - [ ] Rest period functionality and skip option
 - [ ] Workout completion and data persistence
+- [ ] **NEW**: Calorie calculator form submission
+- [ ] **NEW**: BMR and TDEE calculations accuracy
+- [ ] **NEW**: Profile saving and updating
+- [ ] **NEW**: Weight update functionality
 - [ ] Responsive design across devices
 - [ ] Form validation and error handling
+
+### **NEW: Calorie Calculator Testing**
+- [ ] Input validation for all fields (age, weight, height ranges)
+- [ ] BMR calculation accuracy for both genders
+- [ ] Activity level multiplier application
+- [ ] Calorie target calculations (deficit/surplus)
+- [ ] Profile persistence across sessions
+- [ ] Quick weight update functionality
+- [ ] Mobile responsiveness of calculator forms
+- [ ] Error handling for invalid inputs
 
 ### Code Quality Features
 - **Consistent Naming**: Descriptive variable and function names
 - **Error Handling**: Try-catch blocks and user-friendly error messages
 - **Code Comments**: Explaining complex logic and functionality
 - **Modular Structure**: Separated concerns and reusable components
+- **Input Sanitization**: Protection against invalid data
+- **Database Indexing**: Optimized queries for user profiles
 
 ---
 
 ## 🔮 Future Enhancement Ideas
 
 ### Potential Features
-1. **Exercise Library**: Expandable database of exercises with descriptions
-2. **Workout Templates**: Pre-built workout routines for different goals
-3. **Progress Charts**: Visual analytics of workout history
-4. **Social Features**: Share workouts and compete with friends
-5. **Mobile App**: React Native or PWA version
-6. **Integration**: Fitness tracker and wearable device connectivity
-7. **Advanced Timer**: Custom rest periods per exercise
-8. **Workout Plans**: Multi-week training programs
+1. **Enhanced Calorie Features**:
+   - Macro breakdown calculator (protein/carbs/fats ratios)
+   - Meal planning with calorie targets
+   - Food logging integration
+   - Progress photos with measurements
+   - Body composition tracking (body fat percentage)
+
+2. **Workout Enhancements**:
+   - Exercise video library with demonstrations
+   - Workout templates for different goals (strength, cardio, HIIT)
+   - Progress charts and analytics
+   - Social features (share workouts, compete with friends)
+   - Wearable device integration
+
+3. **Nutrition Features**:
+   - Recipe suggestions based on calorie targets
+   - Meal prep planning
+   - Nutritional education content
+   - Supplement recommendations
+   - Hydration tracking
 
 ### Technical Improvements
 1. **API Endpoints**: RESTful API for mobile app integration
@@ -311,6 +420,7 @@ The workout timer manages multiple concurrent states:
 4. **Testing**: Unit and integration test coverage
 5. **Deployment**: Docker containerization and CI/CD pipeline
 6. **Monitoring**: Application performance and error tracking
+7. **Data Analytics**: User behavior tracking and insights
 
 ---
 
@@ -325,14 +435,57 @@ The workout timer manages multiple concurrent states:
 - **Server-Side Rendering**: EJS templating and data flow
 - **Session Management**: Secure state persistence
 - **Form Handling**: Dynamic forms and validation
+- **Mathematical Computing**: Scientific calculations in web applications
+- **Data Modeling**: Complex schema relationships and validation
 
-### Problem-Solving Examples
+### **NEW: Problem-Solving Examples**
 1. **Timer State Management**: Handling multiple concurrent timers
 2. **Dynamic Form Generation**: Creating flexible exercise input system
 3. **Autocomplete Implementation**: Efficient filtering and selection
 4. **Responsive Timer Display**: Readable across all device sizes
 5. **Data Persistence**: Maintaining state through page reloads
+6. **Scientific Calculations**: Implementing BMR/TDEE formulas accurately
+7. **Profile Management**: Handling user data updates and recalculations
+8. **Form Validation**: Complex multi-field validation with ranges
+9. **User Experience Design**: Intuitive calorie calculator workflow
+
+### **NEW: Advanced Concepts Applied**
+- **Mathematical Formulas**: Implementing peer-reviewed equations
+- **Conditional Logic**: Gender-specific BMR calculations
+- **Data Relationships**: User-profile one-to-one associations
+- **Input Validation**: Comprehensive client and server-side checks
+- **User Interface Design**: Multi-step form with clear visual hierarchy
+- **Educational Content Integration**: Helping users understand their data
 
 ---
 
-This fitness tracker project demonstrates a complete understanding of modern web development practices, from database design to user experience optimization. The application successfully combines functionality, usability, and clean code architecture to create a practical fitness management tool.
+## 🎯 **NEW: Calorie Calculator Deep Dive**
+
+### Scientific Foundation
+The calorie calculator is built on proven scientific research:
+
+- **Mifflin-St Jeor Equation**: Chosen for superior accuracy over Harris-Benedict
+- **Activity Factors**: Based on established metabolic research
+- **Calorie Adjustments**: Conservative, sustainable approaches to weight change
+- **BMI Integration**: Additional health metric for user awareness
+
+### User Journey
+1. **Discovery**: Access via navigation or landing page preview
+2. **Input**: Guided form with helpful explanations
+3. **Calculation**: Instant, accurate results with clear explanations
+4. **Understanding**: Educational content about their results
+5. **Action**: Integration with workout planning
+6. **Maintenance**: Easy updates as user progresses
+
+### Data Flow
+```
+User Input → Validation → BMR Calculation → TDEE Calculation → 
+Goal Adjustments → Database Save → Results Display → 
+Profile Management → Updates & Recalculation
+```
+
+---
+
+This fitness tracker project demonstrates a complete understanding of modern web development practices, from database design to user experience optimization, now enhanced with science-based nutrition guidance. The application successfully combines functionality, usability, and clean code architecture to create a comprehensive fitness management tool that addresses both workout planning and nutritional needs.
+
+The addition of the calorie calculator transforms the app from a simple workout tracker into a complete fitness companion, providing users with the two most critical components of fitness success: effective exercise routines and proper nutrition planning.

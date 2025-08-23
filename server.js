@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const workoutRoutes = require('./routes/workouts');
+const calorieRoutes = require('./routes/calories');
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.set('views', path.join(__dirname, 'views'));
 // Routes
 app.use('/auth', authRoutes);
 app.use('/workouts', workoutRoutes);
+app.use('/calories', calorieRoutes);
 
 app.get('/', (req, res) => {
   if (req.session.userId) {

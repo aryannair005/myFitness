@@ -1,0 +1,224 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <h2>🎯 Your Personalized Calorie Plan</h2>
+                <p class="text-muted">Based on your profile, here are your daily calorie targets</p>
+                <small class="text-muted">Last calculated: <%= new Date(profile.lastCalculated).toLocaleDateString() %></small>
+            </div>
+            
+            <!-- BMR Info -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h5 class="text-primary">🔥 Your Base Metabolic Rate (BMR)</h5>
+                    <h3 class="text-primary"><%= profile.bmr %> calories/day</h3>
+                    <p class="text-muted mb-0">This is the minimum energy your body needs at rest</p>
+                </div>
+            </div>
+            
+            <!-- Calorie Goals -->
+            <div class="row g-4 mb-4">
+                <!-- Maintenance -->
+                <div class="col-md-4">
+                    <div class="card h-100 border-info">
+                        <div class="card-header bg-info text-white text-center">
+                            <h5 class="mb-0">⚖️ Maintenance</h5>
+                            <small>Stay at current weight</small>
+                        </div>
+                        <div class="card-body text-center">
+                            <h2 class="text-info mb-3"><%= profile.maintenanceCalories %></h2>
+                            <p class="card-text">
+                                <strong>calories per day</strong><br>
+                                <small class="text-muted">Maintain your current weight by eating this amount daily</small>
+                            </p>
+                            <div class="mt-3">
+                                <div class="bg-light p-2 rounded">
+                                    <small><strong>Weekly:</strong> <%= (profile.maintenanceCalories * 7).toLocaleString() %> cal</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Deficit (Weight Loss) -->
+                <div class="col-md-4">
+                    <div class="card h-100 border-success">
+                        <div class="card-header bg-success text-white text-center">
+                            <h5 class="mb-0">📉 Weight Loss</h5>
+                            <small>Lose ~0.5kg per week</small>
+                        </div>
+                        <div class="card-body text-center">
+                            <h2 class="text-success mb-3"><%= profile.deficitCalories %></h2>
+                            <p class="card-text">
+                                <strong>calories per day</strong><br>
+                                <small class="text-muted">Safe, sustainable weight loss through a 500-calorie daily deficit</small>
+                            </p>
+                            <div class="mt-3">
+                                <div class="bg-light p-2 rounded">
+                                    <small><strong>Deficit:</strong> -500 cal/day</small><br>
+                                    <small><strong>Expected loss:</strong> 0.5kg/week</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Surplus (Muscle Gain) -->
+                <div class="col-md-4">
+                    <div class="card h-100 border-warning">
+                        <div class="card-header bg-warning text-dark text-center">
+                            <h5 class="mb-0">📈 Muscle Gain</h5>
+                            <small>Build muscle gradually</small>
+                        </div>
+                        <div class="card-body text-center">
+                            <h2 class="text-warning mb-3"><%= profile.surplusCalories %></h2>
+                            <p class="card-text">
+                                <strong>calories per day</strong><br>
+                                <small class="text-muted">Moderate surplus for lean muscle growth with minimal fat gain</small>
+                            </p>
+                            <div class="mt-3">
+                                <div class="bg-light p-2 rounded">
+                                    <small><strong>Surplus:</strong> +300 cal/day</small><br>
+                                    <small><strong>Focus:</strong> Lean muscle gain</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Summary -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">👤 Your Profile Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Age:</strong> <%= profile.age %> years</p>
+                            <p><strong>Gender:</strong> <%= profile.gender.charAt(0).toUpperCase() + profile.gender.slice(1) %></p>
+                            <p><strong>Height:</strong> <%= profile.height %> cm</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Weight:</strong> <%= profile.weight %> kg</p>
+                            <p><strong>BMI:</strong> <%= (profile.weight / ((profile.height/100) * (profile.height/100))).toFixed(1) %></p>
+                            <p><strong>Activity Level:</strong> 
+                                <% 
+                                const activityLabels = {
+                                    'sedentary': 'Sedentary',
+                                    'lightly_active': 'Lightly Active',
+                                    'moderately_active': 'Moderately Active',
+                                    'very_active': 'Very Active',
+                                    'extra_active': 'Extra Active'
+                                };
+                                %>
+                                <%= activityLabels[profile.activityLevel] %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Weight Update -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">⚡ Quick Weight Update</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Update your weight to recalculate calories automatically</p>
+                    <form action="/calories/update" method="POST" class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label for="newWeight" class="form-label">New Weight (kg)</label>
+                            <input type="number" class="form-control" id="newWeight" name="weight" 
+                                   value="<%= profile.weight %>" min="30" max="300" step="0.1" required>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary">Update Calories</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Tips and Recommendations -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">💡 Tips for Success</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-success">🥗 For Weight Loss:</h6>
+                            <ul class="small">
+                                <li>Focus on protein to maintain muscle</li>
+                                <li>Include plenty of vegetables and fiber</li>
+                                <li>Stay hydrated with water</li>
+                                <li>Aim for 0.5-1kg loss per week</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-warning">💪 For Muscle Gain:</h6>
+                            <ul class="small">
+                                <li>Eat 1.6-2.2g protein per kg body weight</li>
+                                <li>Include strength training 3-4x per week</li>
+                                <li>Get adequate sleep for recovery</li>
+                                <li>Be patient - muscle growth takes time</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <strong>📊 Remember:</strong> These are estimates. Monitor your progress and adjust based on your results. 
+                                Individual metabolism can vary ±10-15% from calculations.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="text-center">
+                <a href="/calories" class="btn btn-outline-primary me-2">🔄 Recalculate</a>
+                <a href="/workouts" class="btn btn-primary me-2">💪 View Workouts</a>
+                <a href="/workouts/create" class="btn btn-success">➕ Create Workout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.bg-info {
+    background-color: #17a2b8 !important;
+}
+
+.text-info {
+    color: #17a2b8 !important;
+}
+
+.border-info {
+    border-color: #17a2b8 !important;
+}
+
+.bg-warning {
+    background-color: #ffc107 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.border-warning {
+    border-color: #ffc107 !important;
+}
+</style>
