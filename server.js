@@ -39,10 +39,9 @@ app.get('/', (req, res) => {
   if (req.session.userId) {
     res.redirect('/workouts');
   } else {
-    res.redirect('/auth/login');
+    res.render('landing');
   }
 });
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
