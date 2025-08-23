@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Workout - <%= workout.name %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/workouts">FitTracker</a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">Hello, <%= username %>!</span>
+                <form action="/auth/logout" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <div class="workout-timer-container">
+            <div class="text-center mb-4">
+                <h2><%= workout.name %></h2>
+                <div class="timer-display">
+                    <h1 id="workoutTimer" class="display-1 text-primary">00:00</h1>
+                </div>
+                <div class="timer-controls mb-4">
+                    <button id="startBtn" class="btn btn-success btn-lg me-2">Start</button>
+                    <button id="pauseBtn" class="btn btn-warning btn-lg me-2" disabled>Pause</button>
+                    <button id="resetBtn" class="btn btn-secondary btn-lg me-2">Reset</button>
+                    <button id="completeBtn" class="btn btn-primary btn-lg" onclick="completeWorkout()">Complete Workout</button>
+                </div>
+            </div>
+            
+            <div class="current-exercise-card card mb-4">
+                <div class="card-header text-center">
+                    <h4>Current Exercise: <span id="currentExerciseName">Ready to start</span></h4>
+                    <div class="progress mt-2">
+                        <div id="exerciseProgress" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="card-body text-center">
+                    <div id="exerciseInfo">
+                        <p class="mb-1">Get ready to start your workout!</p>
+                    </div>
+                    <div id="restTimer" class="mt-3" style="display: none;">
+                        <h3 class="text-warning">Rest Time: <span id="restTimeDisplay">60</span>s</h3>
+                        <button class="btn btn-sm btn-primary" onclick="skipRest()">Skip Rest</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercises-list">
+                <h4>Workout Plan</h4>
+                <% workout.exercises.forEach((exercise, index) => { %>
+                    <div class="exercise-card card mb-2" data-exercise-index="<%= index %>">
+                        <div class="card-body py-2">
+                            <div class="row align-items-center">
+                                <div class="col-md-4">
+                                    <h6 class="mb-0"><%= exercise.name %></h6>
+                                </div>
+                                <div class="col-md-8">
+                                    <small class="text-muted">
+                                        <%= exercise.sets %> sets × <%= exercise.reps %> reps 
+                                        <% if (exercise.weight > 0) { %>
+                                            @ <%= exercise.weight %>kg
+                                        <% } %>
+                                        (Rest: <%= exercise.restTime %>s)
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+
+        <form id="completeForm" action="/workouts/<%= workout._id %>/complete" method="POST" style="display: none;">
+            <input type="hidden" name="totalTime" id="totalTimeInput">
+        </form>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script>
+        const workout = <%- JSON.stringify(workout) %>;
+    </script>
+    <script src="/js/workout-timer.js"></script>
+</body>
+</html>
