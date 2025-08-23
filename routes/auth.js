@@ -4,12 +4,18 @@ const router = express.Router();
 
 // Get login page
 router.get('/login', (req, res) => {
-  res.render('auth/login', { error: null });
+  res.render('auth/login', { 
+    title: 'Login - Fitness Tracker',
+    error: null 
+  });
 });
 
 // Get register page
 router.get('/register', (req, res) => {
-  res.render('auth/register', { error: null });
+  res.render('auth/register', { 
+    title: 'Register - Fitness Tracker',
+    error: null 
+  });
 });
 
 // Handle login
@@ -19,14 +25,20 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user || !(await user.comparePassword(password))) {
-      return res.render('auth/login', { error: 'Invalid email or password' });
+      return res.render('auth/login', { 
+        title: 'Login - Fitness Tracker',
+        error: 'Invalid email or password' 
+      });
     }
 
     req.session.userId = user._id;
-    req.session.username = user.username;
+    req.session.username = user.username; // store username in session
     res.redirect('/workouts');
   } catch (error) {
-    res.render('auth/login', { error: 'Something went wrong' });
+    res.render('auth/login', { 
+      title: 'Login - Fitness Tracker',
+      error: 'Something went wrong' 
+    });
   }
 });
 
@@ -41,6 +53,7 @@ router.post('/register', async (req, res) => {
     
     if (existingUser) {
       return res.render('auth/register', { 
+        title: 'Register - Fitness Tracker',
         error: 'User with this email or username already exists' 
       });
     }
@@ -49,17 +62,21 @@ router.post('/register', async (req, res) => {
     await user.save();
 
     req.session.userId = user._id;
-    req.session.username = user.username;
+    req.session.username = user.username; // store username in session
     res.redirect('/workouts');
   } catch (error) {
-    res.render('auth/register', { error: 'Something went wrong' });
+    res.render('auth/register', { 
+      title: 'Register - Fitness Tracker',
+      error: 'Something went wrong' 
+    });
   }
 });
 
 // Logout
 router.post('/logout', (req, res) => {
-  req.session.destroy();
-  res.redirect('/auth/login');
+  req.session.destroy(() => {
+    res.redirect('/auth/login');
+  });
 });
 
 module.exports = router;

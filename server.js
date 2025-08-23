@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const path = require('path');
+const ejsMate = require('ejs-mate');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
@@ -27,7 +28,14 @@ app.use(session({
   cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 hours
 }));
 
-// View engine
+// 🔑 Make session user available in all EJS templates
+app.use((req, res, next) => {
+  res.locals.username = req.session.username || null;
+  next();
+});
+
+// View engine setup with EJS Mate
+app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -39,10 +47,18 @@ app.get('/', (req, res) => {
   if (req.session.userId) {
     res.redirect('/workouts');
   } else {
-    res.render('landing');
+    res.render('landing', { title: 'FitTracker - Your Personal Workout Companion' });
   }
 });
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
+
+// .hero-section{
+//     background: linear-gradient(135deg, #000 0%, #0d6efd 100%) !important;
+//     color: White !important;;
+// }

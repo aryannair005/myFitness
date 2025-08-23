@@ -18,11 +18,13 @@ router.get('/', async (req, res) => {
     const workouts = await Workout.find({ userId: req.session.userId })
       .sort({ createdAt: -1 });
     res.render('workouts/index', { 
+      title: 'My Workouts - Fitness Tracker',
       workouts, 
       username: req.session.username 
     });
   } catch (error) {
     res.render('workouts/index', { 
+      title: 'My Workouts - Fitness Tracker',
       workouts: [], 
       username: req.session.username,
       error: 'Could not load workouts' 
@@ -33,6 +35,7 @@ router.get('/', async (req, res) => {
 // Get create workout page
 router.get('/create', (req, res) => {
   res.render('workouts/create', { 
+    title: 'Create Workout - Fitness Tracker',
     username: req.session.username 
   });
 });
@@ -52,6 +55,7 @@ router.post('/create', async (req, res) => {
     res.redirect('/workouts');
   } catch (error) {
     res.render('workouts/create', { 
+      title: 'Create Workout - Fitness Tracker',
       username: req.session.username,
       error: 'Could not create workout' 
     });
@@ -71,6 +75,7 @@ router.get('/:id', async (req, res) => {
     }
 
     res.render('workouts/detail', { 
+      title: `${workout.name} - Fitness Tracker`,
       workout, 
       username: req.session.username 
     });
@@ -92,6 +97,7 @@ router.post('/:id/start', async (req, res) => {
     }
 
     res.render('workouts/active', { 
+      title: `Active Workout: ${workout.name} - Fitness Tracker`,
       workout, 
       username: req.session.username 
     });

@@ -1,0 +1,23 @@
+<div class="exercises-list">
+    <h4>Workout Plan</h4>
+    <% exercises.forEach((exercise, index) => { %>
+        <div class="exercise-card card mb-2" data-exercise-index="<%= index %>">
+            <div class="card-body py-2">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <h6 class="mb-0"><%= exercise.name %></h6>
+                    </div>
+                    <div class="col-md-8">
+                        <small class="text-muted">
+                            <%= exercise.sets %> sets × <%= exercise.reps %> reps 
+                            <% if (exercise.weight > 0) { %>
+                                @ <%= exercise.weight %>kg
+                            <% } %>
+                            (Rest: <%= exercise.restTime %>s)
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% }) %>
+</div>
