@@ -1,0 +1,151 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container my-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h1 class="display-6 fw-bold text-primary"><%= categoryTitle %></h1>
+                    <p class="lead text-muted">Professional workout plans for this training style</p>
+                </div>
+                <div>
+                    <a href="/plans" class="btn btn-outline-secondary">← All Plans</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Description -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <% if (category === 'push_pull_legs') { %>
+                        <h5>💪 Push Pull Legs Split</h5>
+                        <p class="mb-0">The most popular training split that divides workouts by movement patterns. Push days target chest, shoulders, and triceps. Pull days focus on back and biceps. Leg days work your entire lower body. Perfect for intermediate to advanced trainees.</p>
+                    <% } else if (category === 'upper_lower') { %>
+                        <h5>🔄 Upper Lower Split</h5>
+                        <p class="mb-0">Divide your training between upper body and lower body days. Great for beginners to intermediate trainees who want to train each muscle group twice per week with adequate recovery time.</p>
+                    <% } else if (category === 'full_body') { %>
+                        <h5>🎯 Full Body Workouts</h5>
+                        <p class="mb-0">Target all major muscle groups in each session. Perfect for beginners, those with limited time, or anyone who can only train 2-3 times per week. Efficient and effective.</p>
+                    <% } else if (category === 'bodyweight') { %>
+                        <h5>🤸 Bodyweight Workouts</h5>
+                        <p class="mb-0">No equipment needed! Build strength and muscle using only your bodyweight. Perfect for home workouts, travel, or when you don't have access to a gym.</p>
+                    <% } else if (category === 'strength') { %>
+                        <h5>🏋️ Strength Training</h5>
+                        <p class="mb-0">Focus on building maximum strength with compound movements. Lower rep ranges, heavier weights, and longer rest periods. Perfect for powerlifting and strength sport preparation.</p>
+                    <% } else if (category === 'hiit') { %>
+                        <h5>⚡ HIIT Workouts</h5>
+                        <p class="mb-0">High-Intensity Interval Training for maximum calorie burn and cardiovascular fitness. Short bursts of intense activity followed by brief recovery periods.</p>
+                    <% } else if (category === 'cardio') { %>
+                        <h5>🏃 Cardio Workouts</h5>
+                        <p class="mb-0">Improve your cardiovascular health and endurance with these cardio-focused workouts. Great for fat loss and overall fitness.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Difficulty Level Filter -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                        <span class="fw-bold">Filter by level:</span>
+                        <a href="/plans/category/<%= category %>" class="btn btn-sm btn-outline-primary">All Levels</a>
+                        <a href="/plans/category/<%= category %>?difficulty=beginner" class="btn btn-sm btn-outline-success">Beginner</a>
+                        <a href="/plans/category/<%= category %>?difficulty=intermediate" class="btn btn-sm btn-outline-warning">Intermediate</a>
+                        <a href="/plans/category/<%= category %>?difficulty=advanced" class="btn btn-sm btn-outline-danger">Advanced</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Plans Grid -->
+    <div class="row">
+        <% if (workoutPlans.length === 0) { %>
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <h4 class="text-muted">No workout plans found for this category</h4>
+                    <p class="text-muted">Check back soon - we're adding new plans regularly!</p>
+                    <a href="/plans" class="btn btn-primary">Browse All Plans</a>
+                </div>
+            </div>
+        <% } else { %>
+            <% workoutPlans.forEach(plan => { %>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <% if (plan.imageUrl) { %>
+                            <img src="<%= plan.imageUrl %>" class="card-img-top" alt="<%= plan.name %>" style="height: 200px; object-fit: cover;">
+                        <% } else { %>
+                            <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                                <div class="text-center">
+                                    <div style="font-size: 3rem;">
+                                        <% if (plan.category === 'cardio') { %>🏃
+                                        <% } else if (plan.category === 'bodyweight') { %>🤸
+                                        <% } else if (plan.category === 'strength') { %>🏋️
+                                        <% } else if (plan.category === 'hiit') { %>⚡
+                                        <% } else { %>💪<% } %>
+                                    </div>
+                                    <small class="text-muted"><%= plan.category.replace(/_/g, ' ').toUpperCase() %></small>
+                                </div>
+                            </div>
+                        <% } %>
+                        
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-<%= plan.difficulty === 'beginner' ? 'success' : plan.difficulty === 'intermediate' ? 'warning' : 'danger' %> me-2">
+                                    <%= plan.difficulty.charAt(0).toUpperCase() + plan.difficulty.slice(1) %>
+                                </span>
+                                <span class="badge bg-secondary">
+                                    <%= plan.equipment.charAt(0).toUpperCase() + plan.equipment.slice(1) %>
+                                </span>
+                                <span class="badge bg-info text-dark ms-1">
+                                    <%= plan.duration %> min
+                                </span>
+                            </div>
+                            
+                            <h5 class="card-title"><%= plan.name %></h5>
+                            <p class="card-text text-muted flex-grow-1"><%= plan.description %></p>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted">
+                                    <strong>Targets:</strong> 
+                                    <% plan.targetMuscles.slice(0, 3).forEach((muscle, index) => { %>
+                                        <%= muscle.charAt(0).toUpperCase() + muscle.slice(1) %><%= index < Math.min(plan.targetMuscles.length, 3) - 1 ? ', ' : '' %>
+                                    <% }) %>
+                                    <% if (plan.targetMuscles.length > 3) { %>
+                                        <span class="text-primary">+<%= plan.targetMuscles.length - 3 %> more</span>
+                                    <% } %>
+                                </small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted">
+                                    <strong><%= plan.exercises.length %></strong> exercises
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer bg-transparent">
+                            <div class="d-grid gap-2">
+                                <a href="/plans/<%= plan._id %>" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+
+    <!-- Back to All Plans -->
+    <div class="text-center mt-4">
+        <a href="/plans" class="btn btn-outline-primary btn-lg">
+            ← Browse All Workout Plans
+        </a>
+    </div>
+</div>

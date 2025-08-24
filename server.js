@@ -8,7 +8,8 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const workoutRoutes = require('./routes/workouts');
 const calorieRoutes = require('./routes/calories');
-const foodRoutes = require('./routes/food'); // New food routes
+const foodRoutes = require('./routes/food');
+const plansRoutes = require('./routes/plans'); // New plans routes
 
 const app = express();
 
@@ -45,7 +46,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/auth', authRoutes);
 app.use('/workouts', workoutRoutes);
 app.use('/calories', calorieRoutes);
-app.use('/food', foodRoutes); // Add food routes
+app.use('/food', foodRoutes);
+app.use('/plans', plansRoutes); // Add plans routes
 
 app.get('/', (req, res) => {
   if (req.session.userId) {

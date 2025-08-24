@@ -1,0 +1,207 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container my-4">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h1 class="display-6 mb-2"><%= exercise.name %></h1>
+                    <div class="mb-3">
+                        <% exercise.muscleGroups.forEach(muscle => { %>
+                            <span class="badge bg-primary me-2">
+                                <%= muscle.charAt(0).toUpperCase() + muscle.slice(1) %>
+                            </span>
+                        <% }) %>
+                        <span class="badge bg-<%= exercise.difficulty === 'beginner' ? 'success' : exercise.difficulty === 'intermediate' ? 'warning' : 'danger' %>">
+                            <%= exercise.difficulty.charAt(0).toUpperCase() + exercise.difficulty.slice(1) %>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <button onclick="history.back()" class="btn btn-outline-secondary">
+                        ← Back
+                    </button>
+                </div>
+            </div>
+
+            <!-- Exercise Image/Video -->
+            <div class="card mb-4">
+                <% if (exercise.imageUrl) { %>
+                    <img src="<%= exercise.imageUrl %>" class="card-img-top" alt="<%= exercise.name %>" style="height: 400px; object-fit: cover;">
+                <% } else { %>
+                    <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 400px;">
+                        <div class="text-center">
+                            <div style="font-size: 5rem; opacity: 0.3;">
+                                <% if (exercise.muscleGroups.includes('chest')) { %>💪
+                                <% } else if (exercise.muscleGroups.includes('back')) { %>🔙
+                                <% } else if (exercise.muscleGroups.includes('legs')) { %>🦵
+                                <% } else if (exercise.muscleGroups.includes('core')) { %>🎯
+                                <% } else { %>🏋️<% } %>
+                            </div>
+                            <p class="text-muted">Exercise demonstration coming soon</p>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Description -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Description</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0"><%= exercise.description %></p>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">How to Perform</h5>
+                </div>
+                <div class="card-body">
+                    <ol class="mb-0">
+                        <% exercise.instructions.forEach(instruction => { %>
+                            <li class="mb-2"><%= instruction %></li>
+                        <% }) %>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <% if (exercise.tips && exercise.tips.length > 0) { %>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">💡 Pro Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="mb-0">
+                            <% exercise.tips.forEach(tip => { %>
+                                <li class="mb-2"><%= tip %></li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Variations -->
+            <% if (exercise.variations && exercise.variations.length > 0) { %>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">🔄 Variations</h5>
+                    </div>
+                    <div class="card-body">
+                        <% exercise.variations.forEach(variation => { %>
+                            <div class="mb-3">
+                                <h6 class="text-primary"><%= variation.name %></h6>
+                                <p class="mb-0 text-muted"><%= variation.description %></p>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Info -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">Exercise Info</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Equipment:</strong>
+                        <span class="badge bg-secondary ms-2">
+                            <%= exercise.equipment.replace('_', ' ').charAt(0).toUpperCase() + exercise.equipment.replace('_', ' ').slice(1) %>
+                        </span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Difficulty:</strong>
+                        <span class="badge bg-<%= exercise.difficulty === 'beginner' ? 'success' : exercise.difficulty === 'intermediate' ? 'warning' : 'danger' %> ms-2">
+                            <%= exercise.difficulty.charAt(0).toUpperCase() + exercise.difficulty.slice(1) %>
+                        </span>
+                    </div>
+                    
+                    <div class="mb-0">
+                        <strong>Primary Muscles:</strong>
+                        <div class="mt-2">
+                            <% exercise.muscleGroups.forEach(muscle => { %>
+                                <span class="badge bg-primary me-1 mb-1">
+                                    <%= muscle.charAt(0).toUpperCase() + muscle.slice(1) %>
+                                </span>
+                            <% }) %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safety & Form -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">⚠️ Safety & Form</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <small>✓ Warm up properly before starting</small>
+                        </li>
+                        <li class="mb-2">
+                            <small>✓ Focus on controlled movements</small>
+                        </li>
+                        <li class="mb-2">
+                            <small>✓ Don't sacrifice form for weight</small>
+                        </li>
+                        <li class="mb-2">
+                            <small>✓ Stop if you feel pain or discomfort</small>
+                        </li>
+                        <li class="mb-0">
+                            <small>✓ Breathe properly throughout</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Recommended Reps/Sets -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">📊 Recommended</h6>
+                </div>
+                <div class="card-body">
+                    <% if (exercise.difficulty === 'beginner') { %>
+                        <div class="text-center p-3 bg-success bg-opacity-10 rounded mb-3">
+                            <div class="fw-bold text-success">Beginner</div>
+                            <div>2-3 sets × 8-12 reps</div>
+                            <small class="text-muted">Focus on learning form</small>
+                        </div>
+                    <% } else if (exercise.difficulty === 'intermediate') { %>
+                        <div class="text-center p-3 bg-warning bg-opacity-10 rounded mb-3">
+                            <div class="fw-bold text-warning">Intermediate</div>
+                            <div>3-4 sets × 8-15 reps</div>
+                            <small class="text-muted">Progressive overload</small>
+                        </div>
+                    <% } else { %>
+                        <div class="text-center p-3 bg-danger bg-opacity-10 rounded mb-3">
+                            <div class="fw-bold text-danger">Advanced</div>
+                            <div>4-5 sets × 6-12 reps</div>
+                            <small class="text-muted">High intensity</small>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="d-grid gap-2">
+                <a href="/plans/exercises/browse" class="btn btn-outline-primary">
+                    Browse More Exercises
+                </a>
+                <a href="/plans" class="btn btn-outline-secondary">
+                    Back to Workout Plans
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

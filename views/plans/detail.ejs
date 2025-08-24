@@ -1,0 +1,241 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container my-4">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h1 class="display-6 mb-2"><%= workoutPlan.name %></h1>
+                    <div class="mb-3">
+                        <span class="badge bg-<%= workoutPlan.difficulty === 'beginner' ? 'success' : workoutPlan.difficulty === 'intermediate' ? 'warning' : 'danger' %> me-2">
+                            <%= workoutPlan.difficulty.charAt(0).toUpperCase() + workoutPlan.difficulty.slice(1) %>
+                        </span>
+                        <span class="badge bg-secondary me-2">
+                            <%= workoutPlan.equipment.charAt(0).toUpperCase() + workoutPlan.equipment.slice(1) %>
+                        </span>
+                        <span class="badge bg-info text-dark">
+                            <%= workoutPlan.duration %> min
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <a href="/plans" class="btn btn-outline-secondary mb-2">← Back</a>
+                    <form action="/plans/<%= workoutPlan._id %>/copy" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-primary mb-2">
+                            📋 Copy to My Workouts
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5>About This Workout</h5>
+                    <p class="mb-0"><%= workoutPlan.description %></p>
+                </div>
+            </div>
+
+            <!-- Exercises -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Exercises (<%= workoutPlan.exercises.length %>)</h5>
+                </div>
+                <div class="card-body p-0">
+                    <% workoutPlan.exercises.forEach((exercise, index) => { %>
+                        <div class="border-bottom p-3 <%= index % 2 === 0 ? 'bg-light' : '' %>">
+                            <div class="row align-items-center">
+                                <div class="col-md-1 text-center">
+                                    <span class="badge bg-primary rounded-circle p-2">
+                                        <%= index + 1 %>
+                                    </span>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <h6 class="mb-1">
+                                        <a href="/plans/exercise/<%= exercise.exerciseId._id %>" class="text-decoration-none">
+                                            <%= exercise.exerciseId.name %>
+                                        </a>
+                                    </h6>
+                                    <small class="text-muted">
+                                        <%= exercise.exerciseId.muscleGroups.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(', ') %>
+                                    </small>
+                                    <% if (exercise.exerciseId.equipment !== 'bodyweight') { %>
+                                        <span class="badge bg-secondary ms-2 small">
+                                            <%= exercise.exerciseId.equipment.replace('_', ' ') %>
+                                        </span>
+                                    <% } %>
+                                </div>
+                                
+                                <div class="col-md-5">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <div class="fw-bold text-primary"><%= exercise.sets %></div>
+                                            <small class="text-muted">Sets</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="fw-bold text-success"><%= exercise.reps %></div>
+                                            <small class="text-muted">Reps</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="fw-bold text-warning"><%= exercise.restTime %>s</div>
+                                            <small class="text-muted">Rest</small>
+                                        </div>
+                                    </div>
+                                    <% if (exercise.notes) { %>
+                                        <div class="mt-2">
+                                            <small class="text-info">
+                                                <i class="bi bi-info-circle"></i> <%= exercise.notes %>
+                                            </small>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Stats -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">Workout Overview</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="text-center p-2 bg-light rounded">
+                                <div class="fw-bold text-primary"><%= workoutPlan.exercises.length %></div>
+                                <small>Exercises</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center p-2 bg-light rounded">
+                                <div class="fw-bold text-success">
+                                    <%= workoutPlan.exercises.reduce((sum, ex) => sum + ex.sets, 0) %>
+                                </div>
+                                <small>Total Sets</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center p-2 bg-light rounded">
+                                <div class="fw-bold text-warning"><%= workoutPlan.duration %></div>
+                                <small>Minutes</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center p-2 bg-light rounded">
+                                <div class="fw-bold text-info">
+                                    <%= workoutPlan.difficulty.charAt(0).toUpperCase() %>
+                                </div>
+                                <small>Level</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Target Muscles -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">Target Muscles</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <% workoutPlan.targetMuscles.forEach(muscle => { %>
+                            <span class="badge bg-primary">
+                                <%= muscle.charAt(0).toUpperCase() + muscle.slice(1) %>
+                            </span>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Equipment Needed -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">Equipment</h6>
+                </div>
+                <div class="card-body">
+                    <% 
+                    const equipmentList = [...new Set(workoutPlan.exercises.map(ex => ex.exerciseId.equipment))];
+                    %>
+                    <% if (equipmentList.length === 1 && equipmentList[0] === 'bodyweight') { %>
+                        <div class="text-center p-3">
+                            <div class="text-success mb-2" style="font-size: 2rem;">🤸</div>
+                            <strong>No Equipment Needed!</strong>
+                            <p class="text-muted small mb-0">This workout uses only your bodyweight</p>
+                        </div>
+                    <% } else { %>
+                        <div class="d-flex flex-wrap gap-2">
+                            <% equipmentList.forEach(equipment => { %>
+                                <span class="badge bg-secondary">
+                                    <%= equipment.replace('_', ' ').charAt(0).toUpperCase() + equipment.replace('_', ' ').slice(1) %>
+                                </span>
+                            <% }) %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Tips & Notes -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">💡 Pro Tips</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <% if (workoutPlan.difficulty === 'beginner') { %>
+                            <li class="mb-2">
+                                <small>✓ Start with lighter weights and focus on form</small>
+                            </li>
+                            <li class="mb-2">
+                                <small>✓ Take longer rest periods if needed</small>
+                            </li>
+                            <li class="mb-2">
+                                <small>✓ Don't worry about matching exact rep ranges</small>
+                            </li>
+                        <% } else if (workoutPlan.difficulty === 'intermediate') { %>
+                            <li class="mb-2">
+                                <small>✓ Focus on progressive overload</small>
+                            </li>
+                            <li class="mb-2">
+                                <small>✓ Maintain good form throughout</small>
+                            </li>
+                            <li class="mb-2">
+                                <small>✓ Challenge yourself with appropriate weights</small>
+                            </li>
+                        <% } else { %>
+                            <li class="mb-2">
+                                <small>✓ Push intensity while maintaining form</small>
+                            </li>
+                            <li class="mb-2">
+                                <small>✓ Consider drop sets or supersets</small>
+                            </li>
+                            <li class="mb-2">
+                                <small>✓ Track your performance for progression</small>
+                            </li>
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2">
+                <form action="/plans/<%= workoutPlan._id %>/copy" method="POST">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        🚀 Start This Workout
+                    </button>
+                </form>
+                <a href="/plans" class="btn btn-outline-secondary">
+                    Browse More Plans
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -18,7 +18,7 @@ const foodEntrySchema = new mongoose.Schema({
   },
   foodId: {
     type: String,
-    required: true // FatSecret food ID
+    required: true 
   },
   foodName: {
     type: String,
@@ -26,7 +26,7 @@ const foodEntrySchema = new mongoose.Schema({
   },
   servingId: {
     type: String,
-    required: true // FatSecret serving ID
+    required: true 
   },
   servingDescription: {
     type: String,
