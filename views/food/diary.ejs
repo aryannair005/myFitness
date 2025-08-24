@@ -1,0 +1,192 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container my-4">
+    <!-- Header with date navigation -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="mb-0">🍽️ Food Diary</h2>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="input-group" style="width: 200px;">
+                                <input type="date" class="form-control" id="dateSelect" value="<%= selectedDate %>" onchange="changeDate(this.value)">
+                            </div>
+                            <a href="/food/weekly" class="btn btn-outline-primary">📊 Weekly</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Summary -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📈 Daily Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="p-3">
+                                <h4 class="text-primary"><%= Math.round(dailyTotals.calories) %></h4>
+                                <small class="text-muted">
+                                    Calories
+                                    <% if (calorieProfile) { %>
+                                        <br>Goal: <%= calorieProfile.maintenanceCalories %>
+                                    <% } %>
+                                </small>
+                                <% if (calorieProfile) { %>
+                                    <div class="progress mt-2" style="height: 8px;">
+                                        <div class="progress-bar" style="width: <%= Math.min((dailyTotals.calories / calorieProfile.maintenanceCalories) * 100, 100) %>%"></div>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3">
+                                <h4 class="text-success"><%= Math.round(dailyTotals.carbs) %>g</h4>
+                                <small class="text-muted">Carbs</small>
+                                <% if (calorieProfile) { %>
+                                    <% const carbsGoal = Math.round((calorieProfile.maintenanceCalories * 0.45) / 4) %>
+                                    <br><small class="text-muted">Goal: ~<%= carbsGoal %>g</small>
+                                    <div class="progress mt-2" style="height: 8px;">
+                                        <div class="progress-bar bg-success" style="width: <%= Math.min((dailyTotals.carbs / carbsGoal) * 100, 100) %>%"></div>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3">
+                                <h4 class="text-info"><%= Math.round(dailyTotals.protein) %>g</h4>
+                                <small class="text-muted">Protein</small>
+                                <% if (calorieProfile) { %>
+                                    <% const proteinGoal = Math.round(calorieProfile.weight * 1.6) %>
+                                    <br><small class="text-muted">Goal: ~<%= proteinGoal %>g</small>
+                                    <div class="progress mt-2" style="height: 8px;">
+                                        <div class="progress-bar bg-info" style="width: <%= Math.min((dailyTotals.protein / proteinGoal) * 100, 100) %>%"></div>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3">
+                                <h4 class="text-warning"><%= Math.round(dailyTotals.fat) %>g</h4>
+                                <small class="text-muted">Fat</small>
+                                <% if (calorieProfile) { %>
+                                    <% const fatGoal = Math.round((calorieProfile.maintenanceCalories * 0.3) / 9) %>
+                                    <br><small class="text-muted">Goal: ~<%= fatGoal %>g</small>
+                                    <div class="progress mt-2" style="height: 8px;">
+                                        <div class="progress-bar bg-warning" style="width: <%= Math.min((dailyTotals.fat / fatGoal) * 100, 100) %>%"></div>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meals -->
+    <div class="row">
+        <% const meals = [
+            { key: 'breakfast', name: 'Breakfast', icon: '🌅' },
+            { key: 'lunch', name: 'Lunch', icon: '☀️' },
+            { key: 'dinner', name: 'Dinner', icon: '🌙' },
+            { key: 'snack', name: 'Snacks', icon: '🍎' }
+        ] %>
+
+        <% meals.forEach(meal => { %>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><%= meal.icon %> <%= meal.name %></h5>
+                        <a href="/food/add/<%= meal.key %>?date=<%= selectedDate %>" class="btn btn-sm btn-primary">+ Add</a>
+                    </div>
+                    <div class="card-body">
+                        <% if (foodEntries[meal.key].length === 0) { %>
+                            <p class="text-muted text-center py-3">No items added yet</p>
+                        <% } else { %>
+                            <% let mealTotals = { calories: 0, carbs: 0, protein: 0, fat: 0 } %>
+                            
+                            <% foodEntries[meal.key].forEach(entry => { %>
+                                <% 
+                                    mealTotals.calories += entry.calories;
+                                    mealTotals.carbs += entry.carbs;
+                                    mealTotals.protein += entry.protein;
+                                    mealTotals.fat += entry.fat;
+                                %>
+                                <div class="food-entry mb-3 p-2 border rounded">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1"><%= entry.foodName %></h6>
+                                            <small class="text-muted">
+                                                <%= entry.numberOfServings %> × <%= entry.servingDescription %>
+                                            </small>
+                                        </div>
+                                        <div class="text-end">
+                                            <strong><%= Math.round(entry.calories) %> cal</strong>
+                                            <form action="/food/delete/<%= entry._id %>" method="POST" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger ms-2" onclick="return confirm('Delete this food entry?')">×</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            C: <%= Math.round(entry.carbs) %>g | 
+                                            P: <%= Math.round(entry.protein) %>g | 
+                                            F: <%= Math.round(entry.fat) %>g
+                                        </small>
+                                    </div>
+                                </div>
+                            <% }) %>
+                            
+                            <!-- Meal totals -->
+                            <div class="mt-3 pt-3 border-top">
+                                <div class="row text-center small">
+                                    <div class="col-3">
+                                        <strong><%= Math.round(mealTotals.calories) %></strong><br>
+                                        <small class="text-muted">cal</small>
+                                    </div>
+                                    <div class="col-3">
+                                        <strong><%= Math.round(mealTotals.carbs) %>g</strong><br>
+                                        <small class="text-muted">carbs</small>
+                                    </div>
+                                    <div class="col-3">
+                                        <strong><%= Math.round(mealTotals.protein) %>g</strong><br>
+                                        <small class="text-muted">protein</small>
+                                    </div>
+                                    <div class="col-3">
+                                        <strong><%= Math.round(mealTotals.fat) %>g</strong><br>
+                                        <small class="text-muted">fat</small>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+    
+    <% if (!calorieProfile) { %>
+        <div class="alert alert-info mt-4">
+            <h5>💡 Set Your Goals</h5>
+            <p>Calculate your daily calorie and macro targets to track your progress more effectively!</p>
+            <a href="/calories" class="btn btn-primary">Calculate Calories</a>
+        </div>
+    <% } %>
+</div>
+
+<script>
+function changeDate(date) {
+    if (date === new Date().toISOString().split('T')[0]) {
+        window.location.href = '/food';
+    } else {
+        window.location.href = `/food/date/${date}`;
+    }
+}
+</script>

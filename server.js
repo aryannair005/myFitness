@@ -8,6 +8,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const workoutRoutes = require('./routes/workouts');
 const calorieRoutes = require('./routes/calories');
+const foodRoutes = require('./routes/food'); // New food routes
 
 const app = express();
 
@@ -29,7 +30,7 @@ app.use(session({
   cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 hours
 }));
 
-// 🔑 Make session user available in all EJS templates
+// Make session user available in all EJS templates
 app.use((req, res, next) => {
   res.locals.username = req.session.username || null;
   next();
@@ -44,6 +45,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/auth', authRoutes);
 app.use('/workouts', workoutRoutes);
 app.use('/calories', calorieRoutes);
+app.use('/food', foodRoutes); // Add food routes
 
 app.get('/', (req, res) => {
   if (req.session.userId) {
@@ -57,10 +59,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-
-
-// .hero-section{
-//     background: linear-gradient(135deg, #000 0%, #0d6efd 100%) !important;
-//     color: White !important;;
-// }

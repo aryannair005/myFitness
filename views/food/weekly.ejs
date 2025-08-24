@@ -1,0 +1,320 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container my-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="mb-0">📊 Weekly Food Summary</h2>
+                        <a href="/food" class="btn btn-secondary">← Back to Diary</a>
+                    </div>
+                    <p class="text-muted mt-2">
+                        <%= new Date(weekStart).toLocaleDateString() %> - <%= new Date(weekEnd).toLocaleDateString() %>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Overview Cards -->
+    <div class="row mb-4">
+        <% 
+        const weekTotals = {
+            calories: weeklyData.reduce((sum, day) => sum + day.calories, 0),
+            carbs: weeklyData.reduce((sum, day) => sum + day.carbs, 0),
+            protein: weeklyData.reduce((sum, day) => sum + day.protein, 0),
+            fat: weeklyData.reduce((sum, day) => sum + day.fat, 0)
+        };
+        const avgDaily = {
+            calories: Math.round(weekTotals.calories / 7),
+            carbs: Math.round(weekTotals.carbs / 7),
+            protein: Math.round(weekTotals.protein / 7),
+            fat: Math.round(weekTotals.fat / 7)
+        };
+        %>
+        
+        <div class="col-md-3">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h4 class="text-primary"><%= Math.round(weekTotals.calories) %></h4>
+                    <p class="card-text">Total Calories</p>
+                    <small class="text-muted">Avg: <%= avgDaily.calories %>/day</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h4 class="text-success"><%= Math.round(weekTotals.carbs) %>g</h4>
+                    <p class="card-text">Total Carbs</p>
+                    <small class="text-muted">Avg: <%= avgDaily.carbs %>g/day</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h4 class="text-info"><%= Math.round(weekTotals.protein) %>g</h4>
+                    <p class="card-text">Total Protein</p>
+                    <small class="text-muted">Avg: <%= avgDaily.protein %>g/day</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h4 class="text-warning"><%= Math.round(weekTotals.fat) %>g</h4>
+                    <p class="card-text">Total Fat</p>
+                    <small class="text-muted">Avg: <%= avgDaily.fat %>g/day</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Breakdown -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📅 Daily Breakdown</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Calories</th>
+                                    <th>Carbs (g)</th>
+                                    <th>Protein (g)</th>
+                                    <th>Fat (g)</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% weeklyData.forEach(day => { %>
+                                    <tr>
+                                        <td>
+                                            <strong><%= day.dayName %></strong><br>
+                                            <small class="text-muted"><%= new Date(day.date).toLocaleDateString() %></small>
+                                        </td>
+                                        <td>
+                                            <span class="<%= day.calories > 0 ? 'text-primary' : 'text-muted' %>">
+                                                <%= Math.round(day.calories) %>
+                                            </span>
+                                            <% if (calorieProfile && day.calories > 0) { %>
+                                                <div class="progress mt-1" style="height: 4px;">
+                                                    <div class="progress-bar" style="width: <%= Math.min((day.calories / calorieProfile.maintenanceCalories) * 100, 100) %>%"></div>
+                                                </div>
+                                            <% } %>
+                                        </td>
+                                        <td class="<%= day.carbs > 0 ? 'text-success' : 'text-muted' %>">
+                                            <%= Math.round(day.carbs) %>
+                                        </td>
+                                        <td class="<%= day.protein > 0 ? 'text-info' : 'text-muted' %>">
+                                            <%= Math.round(day.protein) %>
+                                        </td>
+                                        <td class="<%= day.fat > 0 ? 'text-warning' : 'text-muted' %>">
+                                            <%= Math.round(day.fat) %>
+                                        </td>
+                                        <td>
+                                            <% if (day.date === new Date().toISOString().split('T')[0]) { %>
+                                                <a href="/food" class="btn btn-sm btn-primary">View</a>
+                                            <% } else { %>
+                                                <a href="/food/date/<%= day.date %>" class="btn btn-sm btn-outline-primary">View</a>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📈 Daily Calories</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="caloriesChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">🥗 Macronutrients</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="macrosChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Goals Comparison (if profile exists) -->
+    <% if (calorieProfile) { %>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">🎯 Goals vs Actual</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="text-center p-3">
+                                    <h6>Calories</h6>
+                                    <div class="mb-2">
+                                        <strong>Goal:</strong> <%= calorieProfile.maintenanceCalories %><br>
+                                        <strong>Avg:</strong> <%= avgDaily.calories %>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: <%= Math.min((avgDaily.calories / calorieProfile.maintenanceCalories) * 100, 100) %>%"></div>
+                                    </div>
+                                    <small class="text-muted">
+                                        <%= Math.round((avgDaily.calories / calorieProfile.maintenanceCalories) * 100) %>% of goal
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <div class="text-center p-3">
+                                    <% const carbGoal = Math.round((calorieProfile.maintenanceCalories * 0.45) / 4) %>
+                                    <h6>Carbs</h6>
+                                    <div class="mb-2">
+                                        <strong>Goal:</strong> ~<%= carbGoal %>g<br>
+                                        <strong>Avg:</strong> <%= avgDaily.carbs %>g
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" style="width: <%= Math.min((avgDaily.carbs / carbGoal) * 100, 100) %>%"></div>
+                                    </div>
+                                    <small class="text-muted">
+                                        <%= Math.round((avgDaily.carbs / carbGoal) * 100) %>% of goal
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <div class="text-center p-3">
+                                    <% const proteinGoal = Math.round(calorieProfile.weight * 1.6) %>
+                                    <h6>Protein</h6>
+                                    <div class="mb-2">
+                                        <strong>Goal:</strong> ~<%= proteinGoal %>g<br>
+                                        <strong>Avg:</strong> <%= avgDaily.protein %>g
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-info" style="width: <%= Math.min((avgDaily.protein / proteinGoal) * 100, 100) %>%"></div>
+                                    </div>
+                                    <small class="text-muted">
+                                        <%= Math.round((avgDaily.protein / proteinGoal) * 100) %>% of goal
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <div class="text-center p-3">
+                                    <% const fatGoal = Math.round((calorieProfile.maintenanceCalories * 0.3) / 9) %>
+                                    <h6>Fat</h6>
+                                    <div class="mb-2">
+                                        <strong>Goal:</strong> ~<%= fatGoal %>g<br>
+                                        <strong>Avg:</strong> <%= avgDaily.fat %>g
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-warning" style="width: <%= Math.min((avgDaily.fat / fatGoal) * 100, 100) %>%"></div>
+                                    </div>
+                                    <small class="text-muted">
+                                        <%= Math.round((avgDaily.fat / fatGoal) * 100) %>% of goal
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Prepare data for charts
+const weeklyData = <%- JSON.stringify(weeklyData) %>;
+const labels = weeklyData.map(day => day.dayName.substring(0, 3));
+const caloriesData = weeklyData.map(day => Math.round(day.calories));
+const carbsData = weeklyData.map(day => Math.round(day.carbs));
+const proteinData = weeklyData.map(day => Math.round(day.protein));
+const fatData = weeklyData.map(day => Math.round(day.fat));
+
+// Calories Chart
+const caloriesCtx = document.getElementById('caloriesChart').getContext('2d');
+new Chart(caloriesCtx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Daily Calories',
+            data: caloriesData,
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+            tension: 0.3,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Macros Chart
+const macrosCtx = document.getElementById('macrosChart').getContext('2d');
+new Chart(macrosCtx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Carbs (g)',
+                data: carbsData,
+                backgroundColor: '#198754'
+            },
+            {
+                label: 'Protein (g)',
+                data: proteinData,
+                backgroundColor: '#0dcaf0'
+            },
+            {
+                label: 'Fat (g)',
+                data: fatData,
+                backgroundColor: '#ffc107'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
