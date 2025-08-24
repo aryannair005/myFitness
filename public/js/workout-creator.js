@@ -1,17 +1,18 @@
 const commonExercises = [
     'Push-ups', 'Incline Push-ups', 'Decline Push-ups', 'Diamond Push-ups',
     'Bench Press', 'Incline Bench Press', 'Decline Bench Press',
-    'Chest Flys', 'Dips', 'Tricep Dips', 'Shoulder Press', 'Overhead Press',
+    'Dumble Press','Incline Dumble Press','Decline Dumble Press',
+    'Chest Flys','Cable Fly', 'Dips', 'Tricep Dips','Triceps Rope Pushdowns','Tricep Overhead Extension', 'Shoulder Press', 'Overhead Press',
     'Arnold Press', 'Lateral Raises', 'Front Raises',
 
     // Upper body - Pull
     'Pull-ups', 'Chin-ups', 'Wide-grip Pull-ups', 'Lat Pulldowns',
     'Rows', 'Barbell Rows', 'Dumbbell Rows', 'Face Pulls', 'Shrugs',
-    'Bicep Curls', 'Hammer Curls', 'Concentration Curls',
+    'Bicep Curls', 'Hammer Curls', 'Concentration Curls','Rear Delt fly',
 
     // Lower body
     'Squats', 'Front Squats', 'Overhead Squats', 'Bulgarian Split Squats',
-    'Deadlifts', 'Sumo Deadlifts', 'Romanian Deadlifts',
+    'Deadlifts', 'Sumo Deadlifts', 'Romanian Deadlifts','Rdl','Leg Curl',
     'Lunges', 'Side Lunges', 'Step-ups',
     'Leg Press', 'Leg Extensions', 'Hamstring Curls',
     'Calf Raises', 'Glute Bridges', 'Hip Thrusts',

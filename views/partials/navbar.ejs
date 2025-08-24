@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
     <a class="navbar-brand fw-bold" href="<%= username ? '/workouts' : '/' %>">FitTracker</a>
     
@@ -12,10 +12,10 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <!-- Navigation Links -->
         <div class="navbar-nav me-auto">
-          <a class="nav-link" href="/workouts">💪 My Workouts</a>
-          <a class="nav-link" href="/plans">🏋️ Workout Plans</a>
-          <a class="nav-link" href="/food">🍽️ Food</a>
-          <a class="nav-link" href="/calories">📊 Calories</a>
+          <a class="nav-link" href="/workouts">My Workouts</a>
+          <a class="nav-link" href="/plans">Workout Plans</a>
+          <a class="nav-link" href="/food">Food</a>
+          <a class="nav-link" href="/calories">Calories</a>
         </div>
         
         <!-- User info and logout -->
@@ -35,8 +35,8 @@
     <% } else { %>
       <!-- Guest navigation -->
       <div class="navbar-nav ms-auto">
-        <a href="/auth/login" class="btn btn-outline-light btn-sm me-2">Login</a>
-        <a href="/auth/register" class="btn btn-light btn-sm">Sign Up</a>
+        <a href="/auth/login" class="btn border-none btn-sm me-2">Login</a>
+        <a href="/auth/register" class="btn border-none btn-sm">Sign Up</a>
       </div>
     <% } %>
   </div>
