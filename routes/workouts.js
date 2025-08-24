@@ -36,7 +36,8 @@ router.get('/', async (req, res) => {
 router.get('/create', (req, res) => {
   res.render('workouts/create', { 
     title: 'Create Workout - Fitness Tracker',
-    username: req.session.username 
+    username: req.session.username,
+    additionalJS: ['/js/workout-creator.js'] // Pass additionalJS from route
   });
 });
 
@@ -57,6 +58,7 @@ router.post('/create', async (req, res) => {
     res.render('workouts/create', { 
       title: 'Create Workout - Fitness Tracker',
       username: req.session.username,
+      additionalJS: ['/js/workout-creator.js'], // Pass additionalJS on error too
       error: 'Could not create workout' 
     });
   }
@@ -99,7 +101,8 @@ router.post('/:id/start', async (req, res) => {
     res.render('workouts/active', { 
       title: `Active Workout: ${workout.name} - Fitness Tracker`,
       workout, 
-      username: req.session.username 
+      username: req.session.username,
+      additionalJS: ['/js/workout-timer.js'] // Pass additionalJS for timer
     });
   } catch (error) {
     res.redirect('/workouts');

@@ -6,7 +6,7 @@
     <title><%= locals.title || 'Fitness Tracker' %></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
-    <% if (locals.additionalCSS) { %>
+    <% if (typeof additionalCSS !== 'undefined' && additionalCSS) { %>
         <% additionalCSS.forEach(css => { %>
             <link rel="stylesheet" href="<%= css %>">
         <% }) %>
@@ -20,9 +20,13 @@
     </main>
 
     <%- include('../partials/footer') %>
-    <%- include('../partials/scripts') %>
     
-    <% if (locals.additionalJS) { %>
+    <!-- Basic scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+    
+    <!-- Additional JavaScript files -->
+    <% if (typeof additionalJS !== 'undefined' && additionalJS) { %>
         <% additionalJS.forEach(js => { %>
             <script src="<%= js %>"></script>
         <% }) %>
