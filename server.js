@@ -51,7 +51,7 @@ app.use('/plans', plansRoutes); // Add plans routes
 
 app.get('/', (req, res) => {
   if (req.session.userId) {
-    res.redirect('/workouts');
+    res.redirect('/plans');
   } else {
     res.render('landing', { title: 'FitTracker - Your Personal Workout Companion' });
   }

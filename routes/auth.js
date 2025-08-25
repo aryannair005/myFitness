@@ -33,7 +33,7 @@ router.post('/login', async (req, res) => {
 
     req.session.userId = user._id;
     req.session.username = user.username; // store username in session
-    res.redirect('/workouts');
+    res.redirect('/plans');
   } catch (error) {
     res.render('auth/login', { 
       title: 'Login - Fitness Tracker',
