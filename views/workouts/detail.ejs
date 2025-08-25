@@ -6,12 +6,12 @@
         <div>
             <% if (!workout.completed) { %>
                 <form action="/workouts/<%= workout._id %>/start" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-primary">Start Workout</button>
+                    <button type="submit" class="btn border-none">Start Workout</button>
                 </form>
             <% } else { %>
                 <span class="badge bg-success fs-6">Completed</span>
             <% } %>
-            <a href="/workouts" class="btn btn-secondary">Back</a>
+            <a href="/workouts" class="btn border-none">Back</a>
         </div>
     </div>
 

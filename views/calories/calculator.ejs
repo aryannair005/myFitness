@@ -15,7 +15,7 @@
                         <div class="row">
                             <!-- Basic Information -->
                             <div class="col-md-6">
-                                <h5 class="text-primary mb-3">👤 Basic Information</h5>
+                                <h5 class="text-success mb-3">Basic Information</h5>
                                 
                                 <div class="mb-3">
                                     <label for="age" class="form-label">Age (years)</label>
@@ -44,7 +44,7 @@
                             
                             <!-- Physical Measurements -->
                             <div class="col-md-6">
-                                <h5 class="text-primary mb-3">📏 Physical Measurements</h5>
+                                <h5 class="text-success mb-3"> Physical Measurements</h5>
                                 
                                 <div class="mb-3">
                                     <label for="height" class="form-label">Height (cm)</label>
@@ -55,7 +55,7 @@
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="weight" class="form-label">Weight (kg)</label>
+                                    <label for="weight" class="form-label  ">Weight (kg)</label>
                                     <input type="number" class="form-control" id="weight" name="weight" 
                                            min="30" max="300" step="0.1" required
                                            value="<%= profile ? profile.weight : '' %>"
@@ -67,7 +67,7 @@
                         <!-- Activity Level -->
                         <div class="row">
                             <div class="col-12">
-                                <h5 class="text-primary mb-3">🏃‍♂️ Activity Level</h5>
+                                <h5 class="text-success mb-3">  Activity Level</h5>
                                 <div class="activity-selection">
                                     <div class="mb-3">
                                         <div class="form-check activity-option">
@@ -117,7 +117,7 @@
                                         <div class="form-check activity-option">
                                             <input class="form-check-input" type="radio" name="activityLevel" id="extra_active" value="extra_active"
                                                    <%= profile && profile.activityLevel === 'extra_active' ? 'checked' : '' %> required>
-                                            <label class="form-check-label" for="extra_active">
+                                            <label class="form-check-label text-s" for="extra_active">
                                                 <strong>Extra Active (1.9x)</strong><br>
                                                 <small class="text-muted">Very hard exercise/sports + physical job or 2x training</small>
                                             </label>
@@ -128,11 +128,11 @@
                         </div>
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                            <button type="submit" class="btn btn-primary btn-lg px-5">
-                                🧮 Calculate My Calories
+                            <button type="submit" class="btn border-none btn-lg px-5">
+                                Calculate My Calories
                             </button>
                             <% if (profile) { %>
-                                <a href="/calories/results" class="btn btn-outline-secondary btn-lg">
+                                <a href="/calories/results" class="btn border-none   btn-lg">
                                     View Last Results
                                 </a>
                             <% } %>
@@ -144,11 +144,11 @@
             <!-- Information Section -->
             <div class="card mt-4">
                 <div class="card-body">
-                    <h5 class="text-primary mb-3">ℹ️ How It Works</h5>
+                    <h5 class="text-success mb-3">How It Works</h5>
                     <div class="row">
                         <div class="col-md-4">
                             <div class="text-center mb-3">
-                                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
                                      style="width: 50px; height: 50px;">
                                     <strong>1</strong>
                                 </div>
@@ -158,7 +158,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="text-center mb-3">
-                                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
                                      style="width: 50px; height: 50px;">
                                     <strong>2</strong>
                                 </div>
@@ -168,7 +168,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="text-center mb-3">
-                                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
                                      style="width: 50px; height: 50px;">
                                     <strong>3</strong>
                                 </div>
@@ -195,13 +195,21 @@
     background-color: #f8f9fa;
     border-color: #6c757d;
 }
-
+.activity-option input[type="radio"]{
+    display: none;
+}
+    
 .activity-option input[type="radio"]:checked + label {
-    color: #0d6efd;
+    color: #198754;
+}
+
+.activity-option:has(input[type="radio"]:checked) {
+    background-color: #d1e7dd;
+    border-color: #198754;
 }
 
 .activity-option:has(input[type="radio"]:checked) {
     background-color: #e7f1ff;
-    border-color: #0d6efd;
+    border-color: #198754;
 }
 </style>

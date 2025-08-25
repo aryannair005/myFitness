@@ -43,7 +43,7 @@ function addExercise() {
         <div class="exercise-input-group" id="exercise-${exerciseCount}">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h6>Exercise ${exerciseCount}</h6>
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeExercise(${exerciseCount})">
+                <button type="button" class="btn btn-sm border-none" onclick="removeExercise(${exerciseCount})">
                     Remove
                 </button>
             </div>

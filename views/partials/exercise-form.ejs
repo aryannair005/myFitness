@@ -1,7 +1,7 @@
 <div class="exercise-input-group" id="exercise-${exerciseCount}">
     <div class="d-flex justify-content-between align-items-center mb-2">
         <h6>Exercise</h6>
-        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeExercise(this)">
+        <button type="button" class="btn btn-sm border-none" onclick="removeExercise(this)">
             Remove
         </button>
     </div>
@@ -13,7 +13,7 @@
                 <input type="text" class="form-control exercise-name-input" 
                        name="exercises[][name]" 
                        placeholder="Type or select exercise..."
-                       autocomplete="off"
+                       autocomplete="off"   
                        required>
                 <div class="exercise-suggestions" style="display: none;"></div>
             </div>

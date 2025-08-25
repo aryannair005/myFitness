@@ -7,7 +7,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <h2 class="mb-0">📊 Weekly Food Summary</h2>
-                        <a href="/food" class="btn btn-secondary">← Back to Diary</a>
+                        <a href="/food" class="btn border-none">← Back to Diary</a>
                     </div>
                     <p class="text-muted mt-2">
                         <%= new Date(weekStart).toLocaleDateString() %> - <%= new Date(weekEnd).toLocaleDateString() %>
@@ -123,9 +123,9 @@
                                         </td>
                                         <td>
                                             <% if (day.date === new Date().toISOString().split('T')[0]) { %>
-                                                <a href="/food" class="btn btn-sm btn-primary">View</a>
+                                                <a href="/food" class="btn btn-sm border-none">View</a>
                                             <% } else { %>
-                                                <a href="/food/date/<%= day.date %>" class="btn btn-sm btn-outline-primary">View</a>
+                                                <a href="/food/date/<%= day.date %>" class="btn btn-sm border-none">View</a>
                                             <% } %>
                                         </td>
                                     </tr>

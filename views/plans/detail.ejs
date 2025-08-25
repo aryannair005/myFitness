@@ -21,9 +21,9 @@
                     </div>
                 </div>
                 <div>
-                    <a href="/plans" class="btn btn-outline-secondary mb-2">← Back</a>
+                    <a href="/plans" class="btn border-none mb-2">← Back</a>
                     <form action="/plans/<%= workoutPlan._id %>/copy" method="POST" class="d-inline">
-                        <button type="submit" class="btn btn-primary mb-2">
+                        <button type="submit" class="btn border-none mb-2">
                             📋 Copy to My Workouts
                         </button>
                     </form>
@@ -228,11 +228,11 @@
             <!-- Action Buttons -->
             <div class="d-grid gap-2">
                 <form action="/plans/<%= workoutPlan._id %>/copy" method="POST">
-                    <button type="submit" class="btn btn-primary btn-lg w-100">
-                        🚀 Start This Workout
+                    <button type="submit" class="btn border-none btn-lg w-100">
+                        Start This Workout
                     </button>
                 </form>
-                <a href="/plans" class="btn btn-outline-secondary">
+                <a href="/plans" class="btn border-none">
                     Browse More Plans
                 </a>
             </div>

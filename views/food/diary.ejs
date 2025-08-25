@@ -12,7 +12,7 @@
                             <div class="input-group" style="width: 200px;">
                                 <input type="date" class="form-control" id="dateSelect" value="<%= selectedDate %>" onchange="changeDate(this.value)">
                             </div>
-                            <a href="/food/weekly" class="btn btn-outline-primary">📊 Weekly</a>
+                            <a href="/food/weekly" class="btn border-none">📊 Weekly</a>
                         </div>
                     </div>
                 </div>
@@ -104,7 +104,7 @@
                 <div class="card h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0"><%= meal.icon %> <%= meal.name %></h5>
-                        <a href="/food/add/<%= meal.key %>?date=<%= selectedDate %>" class="btn btn-sm btn-primary">+ Add</a>
+                        <a href="/food/add/<%= meal.key %>?date=<%= selectedDate %>" class="btn border-none">+ Add</a>
                     </div>
                     <div class="card-body">
                         <% if (foodEntries[meal.key].length === 0) { %>
