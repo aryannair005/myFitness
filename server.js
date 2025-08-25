@@ -50,14 +50,14 @@ app.use('/food', foodRoutes);
 app.use('/plans', plansRoutes); // Add plans routes
 
 app.get('/', (req, res) => {
-  if (req.session.userId) {
-    res.redirect('/plans');
-  } else {
-    res.render('landing', { title: 'FitTracker - Your Personal Workout Companion' });
-  }
+  res.render('landing', { 
+    title: 'FitTracker - Your Personal Workout Companion',
+    isAuthenticated: !!req.session.userId,
+    username: req.session.username || null
+  });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

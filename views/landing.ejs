@@ -1,14 +1,30 @@
 <% layout('layouts/landing') %>
 
-<%- include('partials/landing-navbar') %>
-<!-- Hero Section -->
-<section class="hero-section">
-    <div class="container">
-        <h1 class="display-4 fw-bold mb-4">Track Your Fitness Journey</h1>
-        <p class="lead mb-4">Create custom workouts, calculate your calorie needs, and stay motivated with our complete fitness tracker.</p>
-        <a href="/auth/register" class="btn  btn-get-started btn-lg">Get Started Free</a>
-    </div>
-</section>
+<% if (isAuthenticated) { %>
+    <!-- Logged In Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">Welcome back, <span class="text-primary"><%= username %></span>!</h1>
+            <p class="lead mb-4">Ready to continue your fitness journey? Track your workouts, log your meals, and stay on top of your goals.</p>
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="/workouts" class="btn btn-primary btn-lg">My Workouts</a>
+                <a href="/food/diary" class="btn btn-outline-primary btn-lg">Food Diary</a>
+            </div>
+        </div>
+    </section>
+<% } else { %>
+    <!-- Guest Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">Track Your Fitness Journey</h1>
+            <p class="lead mb-4">Create custom workouts, calculate your calorie needs, and stay motivated with our complete fitness tracker.</p>
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="/auth/register" class="btn btn-primary btn-lg">Get Started Free</a>
+                <a href="/#features" class="btn btn-outline-primary btn-lg">Learn More</a>
+            </div>
+        </div>
+    </section>
+<% } %>
 
 <!-- Features Section -->
 <section id="features" class="py-5">
@@ -177,14 +193,5 @@
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="py-5 bg-dark text-dark">
-    <div class="container text-center">
-        <h3 class="fw-bold text-light mb-3">Ready to start your fitness journey?</h3>
-        <p class="mb-4  text-light">Join today and get your personalized workout and nutrition plan in minutes</p>
-        <a href="/auth/register" class="btn btn-lg me-3">Create Account</a>
-        <a href="/auth/login" class="btn btn-lg">Sign In</a>
-    </div>
-</section>
 
 <%- include('partials/footer') %>

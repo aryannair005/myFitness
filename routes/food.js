@@ -2,6 +2,7 @@ const express = require('express');
 const FoodEntry = require('../models/FoodEntry');
 const FatSecretService = require('../services/FatSecretService');
 const CalorieProfile = require('../models/CalorieProfile');
+const { validate, validateParams, food: foodValidation } = require('../validations');
 const router = express.Router();
 
 // Middleware to check if user is logged in
@@ -80,7 +81,9 @@ router.get('/', async (req, res) => {
 });
 
 // Get food diary for specific date
-router.get('/date/:date', async (req, res) => {
+router.get('/date/:date', 
+  (req, res, next) => validateParams(foodValidation.dateParam)(req, res, next), 
+  async (req, res) => {
   try {
     const selectedDate = new Date(req.params.date);
     const startOfDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
@@ -132,7 +135,9 @@ router.get('/date/:date', async (req, res) => {
 });
 
 // Add food page
-router.get('/add/:meal', async (req, res) => {
+router.get('/add/:meal', 
+  (req, res, next) => validateParams(foodValidation.mealParam)(req, res, next),
+  async (req, res) => {
   const validMeals = ['breakfast', 'lunch', 'dinner', 'snack'];
   if (!validMeals.includes(req.params.meal)) {
     return res.redirect('/food');
@@ -147,7 +152,9 @@ router.get('/add/:meal', async (req, res) => {
 });
 
 // Search foods API endpoint
-router.get('/api/search', async (req, res) => {
+router.get('/api/search', 
+  (req, res, next) => validate(foodValidation.searchQuery, { query: true })(req, res, next),
+  async (req, res) => {
   try {
     const { q } = req.query;
     if (!q || q.length < 2) {
@@ -163,7 +170,9 @@ router.get('/api/search', async (req, res) => {
 });
 
 // Get food details API endpoint
-router.get('/api/food/:id', async (req, res) => {
+router.get('/api/food/:id', 
+  (req, res, next) => validateParams(foodValidation.idParam)(req, res, next),
+  async (req, res) => {
   try {
     const foodDetails = await fatSecretService.getFoodDetails(req.params.id);
     res.json(foodDetails);
@@ -174,7 +183,9 @@ router.get('/api/food/:id', async (req, res) => {
 });
 
 // Autocomplete API endpoint
-router.get('/api/autocomplete', async (req, res) => {
+router.get('/api/autocomplete', 
+  (req, res, next) => validate(foodValidation.searchQuery, { query: true })(req, res, next),
+  async (req, res) => {
   try {
     const { q } = req.query;
     if (!q || q.length < 2) {
@@ -190,7 +201,9 @@ router.get('/api/autocomplete', async (req, res) => {
 });
 
 // Add food entry
-router.post('/add', async (req, res) => {
+router.post('/add', 
+  (req, res, next) => validate(foodValidation.addEntry)(req, res, next),
+  async (req, res) => {
   try {
     const {
       meal,
@@ -238,7 +251,9 @@ router.post('/add', async (req, res) => {
 });
 
 // Delete food entry
-router.post('/delete/:id', async (req, res) => {
+router.post('/delete/:id', 
+  (req, res, next) => validateParams(foodValidation.idParam)(req, res, next),
+  async (req, res) => {
   try {
     await FoodEntry.findOneAndDelete({
       _id: req.params.id,
@@ -253,7 +268,9 @@ router.post('/delete/:id', async (req, res) => {
 });
 
 // Weekly summary
-router.get('/weekly', async (req, res) => {
+router.get('/weekly', 
+  (req, res, next) => validate(foodValidation.weeklyQuery, { allowUnknown: true })(req, res, next),
+  async (req, res) => {
   try {
     const today = new Date();
     const weekStart = new Date(today);

@@ -2,6 +2,7 @@ const express = require('express');
 const WorkoutPlan = require('../models/WorkoutPlan');
 const Exercise = require('../models/Exercise');
 const Workout = require('../models/Workout');
+const { validate, validateParams, validateQuery, plan } = require('../validations');
 const router = express.Router();
 
 // Middleware to check if user is logged in
@@ -14,8 +15,10 @@ const requireAuth = (req, res, next) => {
 
 router.use(requireAuth);
 
+// Import validations from validations.js
+
 // Get all workout plans
-router.get('/', async (req, res) => {
+router.get('/', validateQuery(plan.list), async (req, res) => {
   try {
     const { category, difficulty, equipment } = req.query;
     let filter = { isPublic: true };
@@ -52,7 +55,7 @@ router.get('/', async (req, res) => {
 });
 
 // Get workout plans by category
-router.get('/category/:category', async (req, res) => {
+router.get('/category/:category', validateParams(plan.getByCategory), async (req, res) => {
   try {
     const category = req.params.category;
     const workoutPlans = await WorkoutPlan.find({ 
@@ -84,7 +87,7 @@ router.get('/category/:category', async (req, res) => {
 });
 
 // Get workout plan details
-router.get('/:id', async (req, res) => {
+router.get('/:id', validateParams(plan.getById), async (req, res) => {
   try {
     const workoutPlan = await WorkoutPlan.findById(req.params.id)
       .populate('exercises.exerciseId');
@@ -104,7 +107,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Get exercise details
-router.get('/exercise/:id', async (req, res) => {
+router.get('/exercise/:id', validateParams(plan.getExercise), async (req, res) => {
   try {
     const exercise = await Exercise.findById(req.params.id);
     
@@ -123,7 +126,7 @@ router.get('/exercise/:id', async (req, res) => {
 });
 
 // Copy workout plan to user's workouts
-router.post('/:id/copy', async (req, res) => {
+router.post('/:id/copy', validateParams(plan.copyPlan), async (req, res) => {
   try {
     const workoutPlan = await WorkoutPlan.findById(req.params.id)
       .populate('exercises.exerciseId');
@@ -157,7 +160,7 @@ router.post('/:id/copy', async (req, res) => {
 });
 
 // Browse exercises
-router.get('/exercises/browse', async (req, res) => {
+router.get('/exercises/browse', validateQuery(plan.browseExercises), async (req, res) => {
   try {
     const { muscle, equipment, difficulty } = req.query;
     let filter = {};
