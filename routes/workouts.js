@@ -3,6 +3,9 @@ const Workout = require('../models/Workout');
 const { validate, validateParams, workout: workoutValidation } = require('../validations');
 const router = express.Router();
 
+
+
+
 // Middleware to check if user is logged in
 const requireAuth = (req, res, next) => {
   if (!req.session.userId) {
@@ -43,9 +46,7 @@ router.get('/create', (req, res) => {
 });
 
 // Create new workout
-router.post('/', 
-  (req, res, next) => validate(workoutValidation.create)(req, res, next), 
-  async (req, res) => {
+router.post('/create', validate(workoutValidation.create), async (req, res) => {
   try {
     const { name, exercises } = req.body;
     
@@ -90,9 +91,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Start workout
-router.get('/:id/start', 
-  (req, res, next) => validateParams(workoutValidation.params)(req, res, next), 
-  async (req, res) => {
+router.get('/:id/start', validateParams(workoutValidation.params), async (req, res) => {
   try {
     const workout = await Workout.findOne({ 
       _id: req.params.id, 
@@ -115,10 +114,7 @@ router.get('/:id/start',
 });
 
 // Complete workout
-router.post('/:id/complete', 
-  (req, res, next) => validateParams(workoutValidation.params)(req, res, next),
-  (req, res, next) => validate(workoutValidation.completeWorkout)(req, res, next), 
-  async (req, res) => {
+router.post('/:id/complete', validateParams(workoutValidation.params), validate(workoutValidation.completeWorkout), async (req, res) => {
   try {
     const { totalTime } = req.body;
     
@@ -138,10 +134,7 @@ router.post('/:id/complete',
 });
 
 // Update workout
-router.put('/:id', 
-  (req, res, next) => validate(workoutValidation.update)(req, res, next),
-  (req, res, next) => validateParams(workoutValidation.params)(req, res, next),
-  async (req, res) => {
+router.post('/:id/update', validateParams(workoutValidation.params), validate(workoutValidation.update), async (req, res) => {
   try {
     await Workout.findOneAndUpdate({ 
       _id: req.params.id, 
@@ -154,9 +147,7 @@ router.put('/:id',
 });
 
 // Delete workout
-router.delete('/:id', 
-  (req, res, next) => validateParams(workoutValidation.params)(req, res, next), 
-  async (req, res) => {
+router.post('/:id/delete', async (req, res) => {
   try {
     await Workout.findOneAndDelete({ 
       _id: req.params.id, 

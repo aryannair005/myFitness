@@ -1,6 +1,5 @@
 const express = require('express');
 const CalorieProfile = require('../models/CalorieProfile');
-const { validate, calorie } = require('../validations');
 const router = express.Router();
 
 // Middleware to check if user is logged in
@@ -13,7 +12,6 @@ const requireAuth = (req, res, next) => {
 
 router.use(requireAuth);
 
-// Get calorie calculator page
 router.get('/', async (req, res) => {
   try {
     const existingProfile = await CalorieProfile.findOne({ userId: req.session.userId });
@@ -33,10 +31,20 @@ router.get('/', async (req, res) => {
 });
 
 // Calculate and save calorie profile
-router.post('/calculate', validate(calorie.calculate), async (req, res) => {
+router.post('/calculate', async (req, res) => {
   try {
     const { age, gender, height, weight, activityLevel } = req.body;
     
+    // Validate input
+    if (!age || !gender || !height || !weight || !activityLevel) {
+      return res.render('calories/calculator', { 
+        title: 'Calorie Calculator - Fitness Tracker',
+        username: req.session.username,
+        profile: null,
+        error: 'Please fill in all fields' 
+      });
+    }
+
     // Calculate BMR using Mifflin-St Jeor equation
     let bmr;
     if (gender === 'male') {
@@ -115,7 +123,7 @@ router.get('/results', async (req, res) => {
 });
 
 // Update profile
-router.post('/update', validate(calorie.update), async (req, res) => {
+router.post('/update', async (req, res) => {
   try {
     const { weight } = req.body;
     const profile = await CalorieProfile.findOne({ userId: req.session.userId });
