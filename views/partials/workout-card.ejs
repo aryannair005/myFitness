@@ -13,16 +13,18 @@
             <% } %>
         </div>
         <div class="card-footer bg-transparent">
-            <div class="btn-group w-100">
-                <a href="/workouts/<%= workout._id %>" class="btn btn-outline-primary btn-sm">View</a>
+            <div class="btn-row">
+                 <form  action="/workouts/<%=workout._id%>">
+                    <button class="btn workout-btn btn-sm" type="submit">View</button>
+                 </form>
                 <% if (!workout.completed) { %>
-                    <form action="/workouts/<%= workout._id %>/start" method="POST" class="d-inline">
-                        <button type="submit" class="btn btn-primary btn-sm">Start</button>
+                    <form  action="/workouts/<%= workout._id %>/start" method="POST">
+                        <button type="submit" class="btn  workout-btn btn-sm">Start</button>
                     </form>
                 <% } %>
-                <form action="/workouts/<%= workout._id %>/delete" method="POST" class="d-inline" 
+                <form  action="/workouts/<%= workout._id %>/delete" method="POST" 
                       onsubmit="return confirm('Are you sure?')">
-                    <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                    <button type="submit" class="btn workout-btn btn-sm">Delete</button>
                 </form>
             </div>
         </div>
