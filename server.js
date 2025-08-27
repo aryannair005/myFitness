@@ -10,6 +10,7 @@ const workoutRoutes = require('./routes/workouts');
 const calorieRoutes = require('./routes/calories');
 const foodRoutes = require('./routes/food');
 const plansRoutes = require('./routes/plans'); // New plans routes
+const testAlertRoutes = require('./routes/test-alert'); // Test alert route
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.use('/workouts', workoutRoutes);
 app.use('/calories', calorieRoutes);
 app.use('/food', foodRoutes);
 app.use('/plans', plansRoutes); // Add plans routes
+app.use('/test', testAlertRoutes); // Test alert routes
 
 app.get('/', (req, res) => {
   if (req.session.userId) {

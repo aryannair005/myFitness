@@ -1,20 +1,18 @@
-<% if (locals.error) { %>
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+<% if (typeof error !== 'undefined' && error && error.trim() !== '') { %>
+    <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
         <%= error %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <% } %>
-
-<% if (locals.success) { %>
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
+<% if (typeof success !== 'undefined' && success && success.trim() !== '') { %>
+    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
         <%= success %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <% } %>
-
-<% if (locals.info) { %>
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
+<% if (typeof info !== 'undefined' && info && info.trim() !== '') { %>
+    <div class="alert alert-info alert-dismissible fade show mb-3" role="alert">
         <%= info %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <% } %>

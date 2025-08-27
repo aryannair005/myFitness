@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
 const router = express.Router();
+const { authValidation, validate } = require('../middleware/validation');
 
 // Get login page
 router.get('/login', (req, res) => {
@@ -19,15 +20,18 @@ router.get('/register', (req, res) => {
 });
 
 // Handle login
-router.post('/login', async (req, res) => {
+router.post('/login', validate(authValidation.login), async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
     if (!user || !(await user.comparePassword(password))) {
+      const errorMsg = 'Invalid credentials';
+      console.log('Login error:', errorMsg);
       return res.render('auth/login', { 
         title: 'Login - Fitness Tracker',
-        error: 'Invalid email or password' 
+        error: errorMsg,
+        formData: req.body
       });
     }
 
@@ -35,15 +39,18 @@ router.post('/login', async (req, res) => {
     req.session.username = user.username; // store username in session
     res.redirect('/plans');
   } catch (error) {
+    console.error('Login error:', error);
+    const errorMsg = 'An error occurred while processing your login. Please try again.';
     res.render('auth/login', { 
       title: 'Login - Fitness Tracker',
-      error: 'Something went wrong' 
+      error: errorMsg,
+      formData: req.body
     });
   }
 });
 
 // Handle registration
-router.post('/register', async (req, res) => {
+router.post('/register', validate(authValidation.register), async (req, res) => {
   try {
     const { username, email, password } = req.body;
     
@@ -52,9 +59,11 @@ router.post('/register', async (req, res) => {
     });
     
     if (existingUser) {
+      const errorMsg = 'User with this email or username already exists';
       return res.render('auth/register', { 
         title: 'Register - Fitness Tracker',
-        error: 'User with this email or username already exists' 
+        error: errorMsg,
+        formData: req.body
       });
     }
 
@@ -65,9 +74,12 @@ router.post('/register', async (req, res) => {
     req.session.username = user.username; // store username in session
     res.redirect('/workouts');
   } catch (error) {
+    console.error('Registration error:', error);
+    const errorMsg = 'An error occurred while processing your registration. Please try again.';
     res.render('auth/register', { 
       title: 'Register - Fitness Tracker',
-      error: 'Something went wrong' 
+      error: errorMsg,
+      formData: req.body
     });
   }
 });
