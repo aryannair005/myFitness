@@ -3,12 +3,7 @@ const router = express.Router();
 const calorieController = require('../controllers/calorieController');
 
 // Middleware to check if user is logged in
-const requireAuth = (req, res, next) => {
-  if (!req.session.userId) {
-    return res.redirect('/auth/login');
-  }
-  next();
-};
+const {requireAuth} = require("../middleware/requireAuth.js");
 
 router.use(requireAuth);
 
