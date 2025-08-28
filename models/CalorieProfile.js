@@ -60,8 +60,6 @@ const calorieProfileSchema = new mongoose.Schema({
     default: Date.now
   }
 });
-
-// Add index for faster queries
 calorieProfileSchema.index({ userId: 1 });
 
 module.exports = mongoose.model('CalorieProfile', calorieProfileSchema);

@@ -19,7 +19,7 @@ const exerciseSchema = new mongoose.Schema({
   },
   restTime: {
     type: Number,
-    default: 60 // seconds
+    default: 60
   }
 });
 

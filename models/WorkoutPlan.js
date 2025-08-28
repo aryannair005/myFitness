@@ -12,16 +12,16 @@ const workoutPlanExerciseSchema = new mongoose.Schema({
     min: 1
   },
   reps: {
-    type: String, // Can be "10-12", "15", "30 seconds", etc.
+    type: String,
     required: true
   },
   weight: {
-    type: String, // Can be "bodyweight", "moderate", "heavy", etc.
+    type: String,
     default: 'moderate'
   },
   restTime: {
     type: Number,
-    default: 60 // seconds
+    default: 60
   },
   notes: {
     type: String
@@ -62,7 +62,7 @@ const workoutPlanSchema = new mongoose.Schema({
     required: true
   },
   duration: {
-    type: Number, // estimated minutes
+    type: Number,
     required: true
   },
   equipment: {
@@ -92,7 +92,7 @@ const workoutPlanSchema = new mongoose.Schema({
   }
 });
 
-// Index for faster queries
+
 workoutPlanSchema.index({ category: 1, difficulty: 1 });
 workoutPlanSchema.index({ targetMuscles: 1 });
 workoutPlanSchema.index({ equipment: 1 });

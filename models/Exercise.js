@@ -50,7 +50,6 @@ const exerciseSchema = new mongoose.Schema({
   }
 });
 
-// Index for faster queries
 exerciseSchema.index({ name: 1 });
 exerciseSchema.index({ muscleGroups: 1 });
 exerciseSchema.index({ equipment: 1 });

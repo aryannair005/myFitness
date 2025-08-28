@@ -70,14 +70,15 @@ const foodEntrySchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for faster queries
+
 foodEntrySchema.index({ userId: 1, date: 1 });
 foodEntrySchema.index({ userId: 1, date: 1, meal: 1 });
 
-// Method to get date without time for daily totals
+
 foodEntrySchema.statics.getDateOnly = function(date) {
   const d = new Date(date);
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  d.setHours(0, 0, 0, 0);
+  return d;
 };
 
 module.exports = mongoose.model('FoodEntry', foodEntrySchema);
