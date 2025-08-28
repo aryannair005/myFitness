@@ -188,26 +188,17 @@
     padding: 12px;
     border: 1px solid #dee2e6;
     border-radius: 8px;
-    transition: all 0.2s ease;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .activity-option:hover {
+    border-color: #0d6efd;
     background-color: #f8f9fa;
-    border-color: #6c757d;
-}
-.activity-option input[type="radio"]{
-    display: none;
-}
-    
-.activity-option input[type="radio"]:checked + label {
-    color: #198754;
 }
 
-.activity-option:has(input[type="radio"]:checked) {
-    background-color: #d1e7dd;
-    border-color: #198754;
-}
-
+.activity-option.active,
 .activity-option:has(input[type="radio"]:checked) {
     background-color: #e7f1ff;
     border-color: #198754;

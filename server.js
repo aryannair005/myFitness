@@ -9,8 +9,8 @@ const authRoutes = require('./routes/auth');
 const workoutRoutes = require('./routes/workouts');
 const calorieRoutes = require('./routes/calories');
 const foodRoutes = require('./routes/food');
-const plansRoutes = require('./routes/plans'); // New plans routes
-const testAlertRoutes = require('./routes/test-alert'); // Test alert route
+const plansRoutes = require('./routes/plans');
+const testAlertRoutes = require('./routes/test-alert');
 
 const app = express();
 
