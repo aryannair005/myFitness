@@ -10,10 +10,11 @@
                 <div class="card-body">
                     <%- include('../partials/alerts') %>
                     
-                    <form action="/workouts/create" method="POST" id="workoutForm">
+                    <form action="/workouts/create" method="POST"  class="needs-validation" novalidate id="workoutForm">
                         <div class="mb-3">
                             <label for="workoutName" class="form-label">Workout Name</label>
                             <input type="text" class="form-control" id="workoutName" name="name" required>
+                            <div class="invalid-feedback">Workout name required</div>
                         </div>
                         
                         <h4>Exercises</h4>

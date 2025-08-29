@@ -10,7 +10,7 @@
                 <div class="card-body">
                     <%- include('../partials/alerts') %>
                     
-                    <form action="/auth/register" method="POST">
+                    <form action="/auth/register" method="POST" class="needs-validation" novalidate>
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <input type="text" class="form-control <%= locals.error && locals.error.includes('username') ? 'is-invalid' : '' %>" 
@@ -19,6 +19,9 @@
                             <% if (locals.error && locals.error.includes('username')) { %>
                                 <div class="invalid-feedback"><%= error %></div>
                             <% } %>
+                            <div class="invalid-feedback">
+                                Username required! 
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
@@ -28,6 +31,9 @@
                             <% if (locals.error && locals.error.includes('email')) { %>
                                 <div class="invalid-feedback"><%= error %></div>
                             <% } %>
+                            <div class="invalid-feedback">
+                                Email required! 
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
@@ -36,6 +42,9 @@
                             <% if (locals.error && locals.error.includes('password')) { %>
                                 <div class="invalid-feedback"><%= error %></div>
                             <% } %>
+                            <div class="invalid-feedback">
+                                Password required! 
+                            </div>
                         </div>
                         <button type="submit" class="btn border-none w-100">Sign Up</button>
                     </form>

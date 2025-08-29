@@ -10,7 +10,7 @@
                 <div class="card-body">
                     <%- include('../partials/alerts') %>
                     
-                    <form action="/auth/login" method="POST">
+                    <form action="/auth/login" method="POST" class="needs-validation" novalidate>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control <%= locals.error && locals.error.includes('email') ? 'is-invalid' : '' %>" 
@@ -18,6 +18,9 @@
                             <% if (locals.error && locals.error.includes('email')) { %>
                                 <div class="invalid-feedback"><%= error %></div>
                             <% } %>
+                            <div class="invalid-feedback">
+                                Email required! 
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
@@ -26,6 +29,9 @@
                             <% if (locals.error && locals.error.includes('password')) { %>
                                 <div class="invalid-feedback"><%= error %></div>
                             <% } %>
+                            <div class="invalid-feedback">
+                                Password required! 
+                            </div>
                         </div>
                         <button type="submit" class="btn border-none w-100">Login</button>
                     </form>
