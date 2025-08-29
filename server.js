@@ -14,7 +14,7 @@ const plansRoutes = require('./routes/plans');
 const app = express();
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fitness-tracker')
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.log('MongoDB connection error:', err));
 

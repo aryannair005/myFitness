@@ -6,3 +6,5 @@ node_modules
 package-lock.json
 seedDatabase.js
 /seedDatabase.js
+services/FatSecretService.js
+/services/FatSecretService.js
