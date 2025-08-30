@@ -3,37 +3,44 @@
 <div class="container my-4">
     <div class="row justify-content-center">
         <div class="col-lg-8">
+            <!-- Page header -->
+            <div class="text-center mb-4">
+                <h2>🔥 Calorie Calculator</h2>
+                <p class="text-muted">Find out how many calories you need each day</p>
+            </div>
+
+            <!-- Calculator form -->
             <div class="card">
-                <div class="card-header text-center">
-                    <h2 class="mb-0">📊 Calorie Maintenance Calculator</h2>
-                    <p class="text-muted mt-2">Calculate your daily calorie needs for different fitness goals</p>
-                </div>
                 <div class="card-body">
-                    <%- include('../partials/alerts') %>
+                    <!-- Show error if any -->
+                    <% if (locals.error) { %>
+                        <div class="alert alert-danger"><%= error %></div>
+                    <% } %>
                     
                     <form action="/calories/calculate" method="POST" id="calorieForm">
                         <div class="row">
-                            <!-- Basic Information -->
+                            <!-- Basic info -->
                             <div class="col-md-6">
-                                <h5 class="text-success mb-3">Basic Information</h5>
+                                <h5 class="mb-3">Basic Info</h5>
                                 
+                                <!-- Age -->
                                 <div class="mb-3">
-                                    <label for="age" class="form-label">Age (years)</label>
+                                    <label for="age" class="form-label">Age</label>
                                     <input type="number" class="form-control" id="age" name="age" 
-                                           min="13" max="120" required
-                                           value="<%= profile ? profile.age : '' %>"
-                                           placeholder="25">
+                                           value="<%= profile ? profile.age : (locals.formData ? formData.age : '') %>"
+                                           min="13" max="120" placeholder="25" required>
                                 </div>
                                 
+                                <!-- Gender -->
                                 <div class="mb-3">
                                     <label class="form-label">Gender</label>
                                     <div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check">
                                             <input class="form-check-input" type="radio" name="gender" id="male" value="male"
                                                    <%= profile && profile.gender === 'male' ? 'checked' : '' %> required>
                                             <label class="form-check-label" for="male">Male</label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check">
                                             <input class="form-check-input" type="radio" name="gender" id="female" value="female"
                                                    <%= profile && profile.gender === 'female' ? 'checked' : '' %> required>
                                             <label class="form-check-label" for="female">Female</label>
@@ -42,98 +49,98 @@
                                 </div>
                             </div>
                             
-                            <!-- Physical Measurements -->
+                            <!-- Physical measurements -->
                             <div class="col-md-6">
-                                <h5 class="text-success mb-3"> Physical Measurements</h5>
+                                <h5 class="mb-3">Measurements</h5>
                                 
+                                <!-- Height -->
                                 <div class="mb-3">
                                     <label for="height" class="form-label">Height (cm)</label>
                                     <input type="number" class="form-control" id="height" name="height" 
-                                           min="100" max="250" step="0.1" required
-                                           value="<%= profile ? profile.height : '' %>"
-                                           placeholder="175">
+                                           value="<%= profile ? profile.height : (locals.formData ? formData.height : '') %>"
+                                           min="100" max="250" step="0.1" placeholder="175" required>
                                 </div>
                                 
+                                <!-- Weight -->
                                 <div class="mb-3">
-                                    <label for="weight" class="form-label  ">Weight (kg)</label>
+                                    <label for="weight" class="form-label">Weight (kg)</label>
                                     <input type="number" class="form-control" id="weight" name="weight" 
-                                           min="30" max="300" step="0.1" required
-                                           value="<%= profile ? profile.weight : '' %>"
-                                           placeholder="70">
+                                           value="<%= profile ? profile.weight : (locals.formData ? formData.weight : '') %>"
+                                           min="30" max="300" step="0.1" placeholder="70" required>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Activity Level -->
-                        <div class="row">
-                            <div class="col-12">
-                                <h5 class="text-success mb-3">  Activity Level</h5>
-                                <div class="activity-selection">
-                                    <div class="mb-3">
-                                        <div class="form-check activity-option">
-                                            <input class="form-check-input" type="radio" name="activityLevel" id="sedentary" value="sedentary"
-                                                   <%= profile && profile.activityLevel === 'sedentary' ? 'checked' : '' %> required>
-                                            <label class="form-check-label" for="sedentary">
-                                                <strong>Sedentary (1.2x)</strong><br>
-                                                <small class="text-muted">Little or no exercise, desk job</small>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <div class="form-check activity-option">
-                                            <input class="form-check-input" type="radio" name="activityLevel" id="lightly_active" value="lightly_active"
-                                                   <%= profile && profile.activityLevel === 'lightly_active' ? 'checked' : '' %> required>
-                                            <label class="form-check-label" for="lightly_active">
-                                                <strong>Lightly Active (1.375x)</strong><br>
-                                                <small class="text-muted">Light exercise/sports 1-3 days/week</small>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <div class="form-check activity-option">
-                                            <input class="form-check-input" type="radio" name="activityLevel" id="moderately_active" value="moderately_active"
-                                                   <%= profile && profile.activityLevel === 'moderately_active' ? 'checked' : '' %> required>
-                                            <label class="form-check-label" for="moderately_active">
-                                                <strong>Moderately Active (1.55x)</strong><br>
-                                                <small class="text-muted">Moderate exercise/sports 3-5 days/week</small>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <div class="form-check activity-option">
-                                            <input class="form-check-input" type="radio" name="activityLevel" id="very_active" value="very_active"
-                                                   <%= profile && profile.activityLevel === 'very_active' ? 'checked' : '' %> required>
-                                            <label class="form-check-label" for="very_active">
-                                                <strong>Very Active (1.725x)</strong><br>
-                                                <small class="text-muted">Hard exercise/sports 6-7 days a week</small>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <div class="form-check activity-option">
-                                            <input class="form-check-input" type="radio" name="activityLevel" id="extra_active" value="extra_active"
-                                                   <%= profile && profile.activityLevel === 'extra_active' ? 'checked' : '' %> required>
-                                            <label class="form-check-label text-s" for="extra_active">
-                                                <strong>Extra Active (1.9x)</strong><br>
-                                                <small class="text-muted">Very hard exercise/sports + physical job or 2x training</small>
-                                            </label>
-                                        </div>
-                                    </div>
+                        <!-- Activity level -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">Activity Level</h5>
+                            <div class="activity-options">
+                                <!-- Sedentary -->
+                                <div class="activity-option mb-2">
+                                    <input class="form-check-input" type="radio" name="activityLevel" 
+                                           id="sedentary" value="sedentary"
+                                           <%= profile && profile.activityLevel === 'sedentary' ? 'checked' : '' %> required>
+                                    <label class="form-check-label w-100" for="sedentary">
+                                        <strong>Sedentary</strong> - Desk job, no exercise
+                                        <br><small class="text-muted">Little or no physical activity</small>
+                                    </label>
+                                </div>
+                                
+                                <!-- Light -->
+                                <div class="activity-option mb-2">
+                                    <input class="form-check-input" type="radio" name="activityLevel" 
+                                           id="light" value="light"
+                                           <%= profile && profile.activityLevel === 'light' ? 'checked' : '' %> required>
+                                    <label class="form-check-label w-100" for="light">
+                                        <strong>Light Activity</strong> - Light exercise 1-3 days/week
+                                        <br><small class="text-muted">Walking, light gym sessions</small>
+                                    </label>
+                                </div>
+                                
+                                <!-- Moderate -->
+                                <div class="activity-option mb-2">
+                                    <input class="form-check-input" type="radio" name="activityLevel" 
+                                           id="moderate" value="moderate"
+                                           <%= profile && profile.activityLevel === 'moderate' ? 'checked' : '' %> required>
+                                    <label class="form-check-label w-100" for="moderate">
+                                        <strong>Moderate Activity</strong> - Exercise 3-5 days/week
+                                        <br><small class="text-muted">Regular gym, sports, or fitness classes</small>
+                                    </label>
+                                </div>
+                                
+                                <!-- Active -->
+                                <div class="activity-option mb-2">
+                                    <input class="form-check-input" type="radio" name="activityLevel" 
+                                           id="active" value="active"
+                                           <%= profile && profile.activityLevel === 'active' ? 'checked' : '' %> required>
+                                    <label class="form-check-label w-100" for="active">
+                                        <strong>Very Active</strong> - Hard exercise 6-7 days/week
+                                        <br><small class="text-muted">Daily intense workouts or sports</small>
+                                    </label>
+                                </div>
+                                
+                                <!-- Very Active -->
+                                <div class="activity-option mb-2">
+                                    <input class="form-check-input" type="radio" name="activityLevel" 
+                                           id="very_active" value="very_active"
+                                           <%= profile && profile.activityLevel === 'very_active' ? 'checked' : '' %> required>
+                                    <label class="form-check-label w-100" for="very_active">
+                                        <strong>Extremely Active</strong> - Very hard exercise + physical job
+                                        <br><small class="text-muted">Training twice daily or very physical job</small>
+                                    </label>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                            <button type="submit" class="btn border-none btn-lg px-5">
-                                Calculate My Calories
+                        <!-- Submit button -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                🧮 Calculate My Calories
                             </button>
+                            
                             <% if (profile) { %>
-                                <a href="/calories/results" class="btn border-none   btn-lg">
-                                    View Last Results
+                                <a href="/calories/results" class="btn btn-outline-secondary btn-lg ms-2">
+                                    📊 View Last Results
                                 </a>
                             <% } %>
                         </div>
@@ -141,39 +148,36 @@
                 </div>
             </div>
             
-            <!-- Information Section -->
+            <!-- Info section -->
             <div class="card mt-4">
                 <div class="card-body">
-                    <h5 class="text-success mb-3">How It Works</h5>
-                    <div class="row">
+                    <h5 class="text-center mb-3">How It Works</h5>
+                    <div class="row text-center">
                         <div class="col-md-4">
-                            <div class="text-center mb-3">
-                                <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
-                                     style="width: 50px; height: 50px;">
-                                    <strong>1</strong>
+                            <div class="mb-3">
+                                <div class="badge bg-primary rounded-circle p-3 mb-2">
+                                    <span class="fs-5">1️⃣</span>
                                 </div>
-                                <h6 class="mt-2">Calculate BMR</h6>
-                                <small class="text-muted">Your body's basic energy needs using the proven Mifflin-St Jeor equation</small>
+                                <h6>Calculate BMR</h6>
+                                <small class="text-muted">Your body's basic energy needs at rest</small>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="text-center mb-3">
-                                <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
-                                     style="width: 50px; height: 50px;">
-                                    <strong>2</strong>
+                            <div class="mb-3">
+                                <div class="badge bg-primary rounded-circle p-3 mb-2">
+                                    <span class="fs-5">2️⃣</span>
                                 </div>
-                                <h6 class="mt-2">Apply Activity</h6>
-                                <small class="text-muted">Multiply by your activity level to get Total Daily Energy Expenditure (TDEE)</small>
+                                <h6>Add Activity</h6>
+                                <small class="text-muted">Multiply by your daily activity level</small>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="text-center mb-3">
-                                <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" 
-                                     style="width: 50px; height: 50px;">
-                                    <strong>3</strong>
+                            <div class="mb-3">
+                                <div class="badge bg-primary rounded-circle p-3 mb-2">
+                                    <span class="fs-5">3️⃣</span>
                                 </div>
-                                <h6 class="mt-2">Set Goals</h6>
-                                <small class="text-muted">Get calories for maintenance, weight loss, or muscle gain</small>
+                                <h6>Set Goals</h6>
+                                <small class="text-muted">Get calories for your fitness goals</small>
                             </div>
                         </div>
                     </div>
@@ -183,24 +187,29 @@
     </div>
 </div>
 
+<!-- CSS for activity selection -->
 <style>
 .activity-option {
-    padding: 12px;
-    border: 1px solid #dee2e6;
+    padding: 15px;
+    border: 2px solid #e9ecef;
     border-radius: 8px;
-    margin-bottom: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .activity-option:hover {
-    border-color: #0d6efd;
+    border-color: #007bff;
     background-color: #f8f9fa;
 }
 
-.activity-option.active,
-.activity-option:has(input[type="radio"]:checked) {
-    background-color: #e7f1ff;
-    border-color: #198754;
+.activity-option.selected {
+    border-color: #28a745;
+    background-color: #d4edda;
+}
+
+.activity-option input[type="radio"] {
+    margin-right: 10px;
 }
 </style>
+
+<script src="/js/calorie-calculator.js"></script>

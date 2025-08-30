@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const calorieController = require('../controllers/calorieController');
+const { requireAuth } = require("../middleware/requireAuth.js");
 
-// Middleware to check if user is logged in
-const {requireAuth} = require("../middleware/requireAuth.js");
-
+// All calorie routes need login
 router.use(requireAuth);
 
-// Routes
+// Calculator pages
 router.get('/', calorieController.getCalculator);
-router.post('/calculate', calorieController.calculateProfile);
 router.get('/results', calorieController.getResults);
-router.post('/update', calorieController.updateProfile);
+
+// Calculator actions
+router.post('/calculate', calorieController.calculateProfile);
+router.post('/update-weight', calorieController.updateWeight);
 
 module.exports = router;
