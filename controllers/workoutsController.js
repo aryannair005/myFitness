@@ -1,18 +1,20 @@
-const express = require('express');
 const Workout = require('../models/Workout');
 
-module.exports.getWorkouts=async (req, res) => {
+// Show all workouts
+exports.getWorkouts = async (req, res) => {
   try {
     const workouts = await Workout.find({ userId: req.session.userId })
       .sort({ createdAt: -1 });
+    
     res.render('workouts/index', { 
-      title: 'My Workouts - Fitness Tracker',
+      title: 'My Workouts',
       workouts, 
       username: req.session.username 
     });
   } catch (error) {
+    console.error('Error loading workouts:', error);
     res.render('workouts/index', { 
-      title: 'My Workouts - Fitness Tracker',
+      title: 'My Workouts',
       workouts: [], 
       username: req.session.username,
       error: 'Could not load workouts' 
@@ -20,20 +22,19 @@ module.exports.getWorkouts=async (req, res) => {
   }
 };
 
-
-module.exports.createWorkouts= (req, res) => {
+// Show create workout page
+exports.createWorkouts = (req, res) => {
   res.render('workouts/create', { 
-    title: 'Create Workout - Fitness Tracker',
-    username: req.session.username,
-    additionalJS: ['/js/workout-creator.js'] // Pass additionalJS from route
+    title: 'Create Workout',
+    username: req.session.username
   });
-}
+};
 
-
-module.exports.createNewWorkouts=async (req, res) => {
+// Create new workout
+exports.createNewWorkouts = async (req, res) => {
+  const { name, exercises } = req.body;
+  
   try {
-    const { name, exercises } = req.body;
-    
     const workout = new Workout({
       name,
       userId: req.session.userId,
@@ -42,17 +43,20 @@ module.exports.createNewWorkouts=async (req, res) => {
 
     await workout.save();
     res.redirect('/workouts');
+    
   } catch (error) {
+    console.error('Error creating workout:', error);
     res.render('workouts/create', { 
-      title: 'Create Workout - Fitness Tracker',
+      title: 'Create Workout',
       username: req.session.username,
-      additionalJS: ['/js/workout-creator.js'], // Pass additionalJS on error too
-      error: 'Could not create workout' 
+      error: 'Could not create workout',
+      workoutName: name
     });
   }
 };
 
-module.exports.getWorkoutDetail=async (req, res) => {
+// Show single workout details
+exports.getWorkoutDetail = async (req, res) => {
   try {
     const workout = await Workout.findOne({ 
       _id: req.params.id, 
@@ -64,16 +68,18 @@ module.exports.getWorkoutDetail=async (req, res) => {
     }
 
     res.render('workouts/detail', { 
-      title: `${workout.name} - Fitness Tracker`,
+      title: workout.name,
       workout, 
       username: req.session.username 
     });
   } catch (error) {
+    console.error('Error loading workout:', error);
     res.redirect('/workouts');
   }
-}
+};
 
-module.exports.startWorkout= async (req, res) => {
+// Start workout session
+exports.startWorkout = async (req, res) => {
   try {
     const workout = await Workout.findOne({ 
       _id: req.params.id, 
@@ -85,38 +91,39 @@ module.exports.startWorkout= async (req, res) => {
     }
 
     res.render('workouts/active', { 
-      title: `Active Workout: ${workout.name} - Fitness Tracker`,
+      title: `Active: ${workout.name}`,
       workout, 
-      username: req.session.username,
-      additionalJS: ['/js/workout-timer.js'] // Pass additionalJS for timer
+      username: req.session.username
     });
   } catch (error) {
+    console.error('Error starting workout:', error);
     res.redirect('/workouts');
   }
-}
+};
 
-
-module.exports.completeWorkout= async (req, res) => {
+// Complete workout
+exports.completeWorkout = async (req, res) => {
+  const { totalTime } = req.body;
+  
   try {
-    const { totalTime } = req.body;
-    
     await Workout.findOneAndUpdate(
       { _id: req.params.id, userId: req.session.userId },
       { 
         completed: true, 
         completedAt: new Date(),
-        totalTime: totalTime || 0
+        totalTime: parseInt(totalTime) || 0
       }
     );
 
     res.redirect('/workouts');
   } catch (error) {
+    console.error('Error completing workout:', error);
     res.redirect('/workouts');
   }
 };
 
-
-module.exports.deleteWorkout=async (req, res) => {
+// Delete workout
+exports.deleteWorkout = async (req, res) => {
   try {
     await Workout.findOneAndDelete({ 
       _id: req.params.id, 
@@ -124,6 +131,7 @@ module.exports.deleteWorkout=async (req, res) => {
     });
     res.redirect('/workouts');
   } catch (error) {
+    console.error('Error deleting workout:', error);
     res.redirect('/workouts');
   }
 };

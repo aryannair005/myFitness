@@ -1,78 +1,152 @@
 <% layout('layouts/boilerplate') %>
 
-<main class="container my-4">
+<div class="container my-4">
+    <!-- Page header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><%= workout.name %></h2>
         <div>
             <% if (!workout.completed) { %>
                 <form action="/workouts/<%= workout._id %>/start" method="POST" class="d-inline">
-                    <button type="submit" class="btn border-none">Start Workout</button>
+                    <button type="submit" class="btn btn-success">🏃 Start Workout</button>
                 </form>
             <% } else { %>
-                <span class="badge bg-success fs-6">Completed</span>
+                <span class="badge bg-success fs-6">✅ Completed</span>
             <% } %>
-            <a href="/workouts" class="btn border-none">Back</a>
+            <a href="/workouts" class="btn btn-outline-secondary">← Back</a>
         </div>
     </div>
 
-    <%- include('../partials/alerts') %>
-
     <div class="row">
+        <!-- Exercises list -->
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h4>Exercises</h4>
+                    <h4>Exercises (<%= workout.exercises.length %>)</h4>
                 </div>
                 <div class="card-body">
                     <% if (workout.exercises.length === 0) { %>
-                        <p class="text-muted">No exercises added yet.</p>
+                        <div class="text-center py-4 text-muted">
+                            <p>No exercises in this workout yet.</p>
+                        </div>
                     <% } else { %>
-                        <div class="exercise-list">
-                            <% workout.exercises.forEach((exercise, index) => { %>
-                                <div class="exercise-item border-bottom py-3">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h5><%= exercise.name %></h5>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="row text-sm">
-                                                <div class="col-3">
-                                                    <strong>Sets:</strong> <%= exercise.sets %>
-                                                </div>
-                                                <div class="col-3">
-                                                    <strong>Reps:</strong> <%= exercise.reps %>
-                                                </div>
-                                                <div class="col-3">
-                                                    <strong>Weight:</strong> <%= exercise.weight %>kg
-                                                </div>
-                                                <div class="col-3">
-                                                    <strong>Rest:</strong> <%= exercise.restTime %>s
-                                                </div>
+                        <% workout.exercises.forEach((exercise, index) => { %>
+                            <div class="exercise-item <%= index < workout.exercises.length - 1 ? 'border-bottom' : '' %> py-3">
+                                <div class="row align-items-center">
+                                    <!-- Exercise name -->
+                                    <div class="col-md-4">
+                                        <h6 class="mb-1"><%= index + 1 %>. <%= exercise.name %></h6>
+                                    </div>
+                                    
+                                    <!-- Exercise details -->
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <small class="text-muted">Sets</small><br>
+                                                <strong><%= exercise.sets %></strong>
+                                            </div>
+                                            <div class="col-3">
+                                                <small class="text-muted">Reps</small><br>
+                                                <strong><%= exercise.reps %></strong>
+                                            </div>
+                                            <div class="col-3">
+                                                <small class="text-muted">Weight</small><br>
+                                                <strong><%= exercise.weight %>kg</strong>
+                                            </div>
+                                            <div class="col-3">
+                                                <small class="text-muted">Rest</small><br>
+                                                <strong><%= exercise.restTime %>s</strong>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            <% }) %>
-                        </div>
+                            </div>
+                        <% }) %>
                     <% } %>
                 </div>
             </div>
         </div>
         
+        <!-- Workout info sidebar -->
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
                     <h5>Workout Info</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Exercises:</strong> <%= workout.exercises.length %></p>
-                    <p><strong>Created:</strong> <%= new Date(workout.createdAt).toLocaleDateString() %></p>
+                    <!-- Basic info -->
+                    <div class="info-item mb-3">
+                        <small class="text-muted">Exercises</small><br>
+                        <strong><%= workout.exercises.length %></strong>
+                    </div>
+                    
+                    <div class="info-item mb-3">
+                        <small class="text-muted">Created</small><br>
+                        <strong><%= new Date(workout.createdAt).toLocaleDateString() %></strong>
+                    </div>
+                    
+                    <!-- Completion info -->
                     <% if (workout.completed) { %>
-                        <p><strong>Completed:</strong> <%= new Date(workout.completedAt).toLocaleDateString() %></p>
-                        <p><strong>Duration:</strong> <%= Math.floor(workout.totalTime / 60) %>min <%= workout.totalTime % 60 %>sec</p>
+                        <div class="info-item mb-3">
+                            <small class="text-muted">Completed</small><br>
+                            <strong><%= new Date(workout.completedAt).toLocaleDateString() %></strong>
+                        </div>
+                        
+                        <div class="info-item mb-3">
+                            <small class="text-muted">Duration</small><br>
+                            <strong><%= Math.floor(workout.totalTime / 60) %>min <%= workout.totalTime % 60 %>sec</strong>
+                        </div>
                     <% } %>
+                    
+                    <!-- Quick stats -->
+                    <hr>
+                    <h6>Quick Stats</h6>
+                    <% 
+                        const totalSets = workout.exercises.reduce((sum, ex) => sum + ex.sets, 0);
+                        const totalReps = workout.exercises.reduce((sum, ex) => sum + (ex.sets * ex.reps), 0);
+                        const totalWeight = workout.exercises.reduce((sum, ex) => sum + (ex.weight * ex.sets), 0);
+                    %>
+                    
+                    <div class="small">
+                        <div class="d-flex justify-content-between">
+                            <span>Total Sets:</span>
+                            <strong><%= totalSets %></strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Total Reps:</span>
+                            <strong><%= totalReps %></strong>
+                        </div>
+                        <% if (totalWeight > 0) { %>
+                            <div class="d-flex justify-content-between">
+                                <span>Total Weight:</span>
+                                <strong><%= totalWeight %>kg</strong>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Actions card -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6>Actions</h6>
+                </div>
+                <div class="card-body">
+                    <% if (!workout.completed) { %>
+                        <form action="/workouts/<%= workout._id %>/start" method="POST" class="mb-2">
+                            <button type="submit" class="btn btn-success w-100">
+                                🏃 Start This Workout
+                            </button>
+                        </form>
+                    <% } %>
+                    
+                    <form action="/workouts/<%= workout._id %>/delete" method="POST" 
+                          onsubmit="return confirm('Are you sure you want to delete this workout?')">
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            🗑️ Delete Workout
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</main>
+</div>

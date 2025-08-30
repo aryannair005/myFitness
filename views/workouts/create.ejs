@@ -8,29 +8,94 @@
                     <h3>Create New Workout</h3>
                 </div>
                 <div class="card-body">
-                    <%- include('../partials/alerts') %>
+                    <!-- Show error if any -->
+                    <% if (locals.error) { %>
+                        <div class="alert alert-danger"><%= error %></div>
+                    <% } %>
                     
-                    <form action="/workouts/create" method="POST"  class="needs-validation" novalidate id="workoutForm">
-                        <div class="mb-3">
+                    <form action="/workouts/create" method="POST" id="workoutForm">
+                        <!-- Workout name -->
+                        <div class="mb-4">
                             <label for="workoutName" class="form-label">Workout Name</label>
-                            <input type="text" class="form-control" id="workoutName" name="name" required>
-                            <div class="invalid-feedback">Workout name required</div>
+                            <input type="text" class="form-control" id="workoutName" name="name" 
+                                   value="<%= locals.workoutName || '' %>" 
+                                   placeholder="e.g., Upper Body Strength" required>
                         </div>
                         
+                        <!-- Exercises section -->
                         <h4>Exercises</h4>
-                        <div id="exercisesList"></div>
+                        <div id="exercisesList">
+                            <!-- Exercises will be added here by JavaScript -->
+                        </div>
                         
-                        <button type="button" class=" border-none btn mb-3" onclick="addExercise()">
-                            Add Exercise
+                        <!-- Add exercise button -->
+                        <button type="button" class="btn btn-outline-primary mb-4" onclick="addExercise()">
+                            + Add Exercise
                         </button>
                         
+                        <!-- Form buttons -->
                         <div class="d-flex gap-2">
-                            <button type="submit" class="btn border-none">Create Workout</button>
-                            <a href="/workouts" class="btn border-none">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Create Workout</button>
+                            <a href="/workouts" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+        
+        <!-- Tips sidebar -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Tips</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li>💪 Start typing exercise names for suggestions</li>
+                        <li>⚖️ Add weight if using dumbbells/barbells</li>
+                        <li>⏱️ Rest time is break between sets</li>
+                        <li>📝 You can always edit workouts later</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Add CSS for suggestions -->
+<style>
+.exercise-group {
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+.suggestions-box {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+}
+
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestion-item:hover {
+    background-color: #f8f9fa;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+</style>
+
+<script src="/js/workout-creator.js"></script>

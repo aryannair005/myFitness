@@ -1,4 +1,4 @@
-const commonExercises = [
+const exercises  = [
     'Push-ups', 'Incline Push-ups', 'Decline Push-ups', 'Diamond Push-ups',
     'Bench Press', 'Incline Bench Press', 'Decline Bench Press',
     'Dumble Press','Incline Dumble Press','Decline Dumble Press',
@@ -35,53 +35,62 @@ const commonExercises = [
     'Clean and Jerk', 'Snatch', 'Power Clean', 'Push Press'
 ];
 
-let exerciseCount = 0;
 
+let exerciseNumber = 0;
+
+// Add new exercise to workout
 function addExercise() {
-    exerciseCount++;
+    exerciseNumber++;
+    
     const exerciseHtml = `
-        <div class="exercise-input-group" id="exercise-${exerciseCount}">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6>Exercise ${exerciseCount}</h6>
-                <button type="button" class="btn btn-sm border-none" onclick="removeExercise(${exerciseCount})">
+        <div class="exercise-group border p-3 mb-3" id="exercise-${exerciseNumber}">
+            <!-- Exercise header -->
+            <div class="d-flex justify-content-between mb-3">
+                <h6>Exercise ${exerciseNumber}</h6>
+                <button type="button" class="btn btn-sm btn-outline-danger" 
+                        onclick="removeExercise(${exerciseNumber})">
                     Remove
                 </button>
             </div>
             
+            <!-- Exercise name with suggestions -->
+            <div class="mb-3">
+                <label class="form-label">Exercise Name</label>
+                <div class="position-relative">
+                    <input type="text" class="form-control" 
+                           name="exercises[${exerciseNumber}][name]" 
+                           placeholder="Start typing exercise name..."
+                           oninput="showSuggestions(this, ${exerciseNumber})"
+                           required>
+                    <div id="suggestions-${exerciseNumber}" class="suggestions-box"></div>
+                </div>
+            </div>
+            
+            <!-- Exercise details -->
             <div class="row">
-                <div class="col-md-12 mb-3">
-                    <label class="form-label">Exercise Name</label>
-                    <div class="position-relative">
-                        <input type="text" class="form-control exercise-name-input" 
-                               name="exercises[${exerciseCount}][name]" 
-                               placeholder="Type or select exercise..."
-                               autocomplete="off"
-                               oninput="showSuggestions(this, ${exerciseCount})"
-                               onfocus="showSuggestions(this, ${exerciseCount})"
-                               required>
-                        <div id="suggestions-${exerciseCount}" class="exercise-suggestions" style="display: none;">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-3">
+                <div class="col-3">
                     <label class="form-label">Sets</label>
-                    <input type="number" class="form-control" name="exercises[${exerciseCount}][sets]" value="3" min="1">
+                    <input type="number" class="form-control" 
+                           name="exercises[${exerciseNumber}][sets]" 
+                           value="3" min="1">
                 </div>
-                
-                <div class="col-md-3">
+                <div class="col-3">
                     <label class="form-label">Reps</label>
-                    <input type="number" class="form-control" name="exercises[${exerciseCount}][reps]" value="10" min="1">
+                    <input type="number" class="form-control" 
+                           name="exercises[${exerciseNumber}][reps]" 
+                           value="10" min="1">
                 </div>
-                
-                <div class="col-md-3">
+                <div class="col-3">
                     <label class="form-label">Weight (kg)</label>
-                    <input type="number" class="form-control" name="exercises[${exerciseCount}][weight]" value="0" min="0" step="0.5">
+                    <input type="number" class="form-control" 
+                           name="exercises[${exerciseNumber}][weight]" 
+                           value="0" min="0" step="0.5">
                 </div>
-                
-                <div class="col-md-3">
-                    <label class="form-label">Rest (seconds)</label>
-                    <input type="number" class="form-control" name="exercises[${exerciseCount}][restTime]" value="60" min="0">
+                <div class="col-3">
+                    <label class="form-label">Rest (sec)</label>
+                    <input type="number" class="form-control" 
+                           name="exercises[${exerciseNumber}][restTime]" 
+                           value="60" min="0">
                 </div>
             </div>
         </div>
@@ -90,33 +99,38 @@ function addExercise() {
     document.getElementById('exercisesList').insertAdjacentHTML('beforeend', exerciseHtml);
 }
 
+// Remove exercise from workout
 function removeExercise(id) {
-    const element = document.getElementById(`exercise-${id}`);
-    if (element) {
-        element.remove();
+    const exerciseElement = document.getElementById(`exercise-${id}`);
+    if (exerciseElement) {
+        exerciseElement.remove();
     }
 }
 
+// Show exercise suggestions when user types
 function showSuggestions(input, exerciseId) {
-    const suggestionsDiv = document.getElementById(`suggestions-${exerciseId}`);
-    const inputValue = input.value.toLowerCase();
+    const suggestionsBox = document.getElementById(`suggestions-${exerciseId}`);
+    const searchText = input.value.toLowerCase();
     
-    if (inputValue.length === 0) {
-        suggestionsDiv.style.display = 'none';
+    // Hide suggestions if input is empty
+    if (searchText.length === 0) {
+        suggestionsBox.style.display = 'none';
         return;
     }
     
-    const filteredExercises = commonExercises.filter(exercise => 
-        exercise.toLowerCase().includes(inputValue)
+    // Find matching exercises
+    const matches = exercises.filter(exercise => 
+        exercise.toLowerCase().includes(searchText)
     );
     
-    if (filteredExercises.length === 0) {
-        suggestionsDiv.style.display = 'none';
+    if (matches.length === 0) {
+        suggestionsBox.style.display = 'none';
         return;
     }
     
+    // Show first 5 matches
     let suggestionsHtml = '';
-    filteredExercises.slice(0, 8).forEach(exercise => {
+    matches.slice(0, 5).forEach(exercise => {
         suggestionsHtml += `
             <div class="suggestion-item" onclick="selectExercise('${exercise}', ${exerciseId})">
                 ${exercise}
@@ -124,29 +138,29 @@ function showSuggestions(input, exerciseId) {
         `;
     });
     
-    suggestionsDiv.innerHTML = suggestionsHtml;
-    suggestionsDiv.style.display = 'block';
+    suggestionsBox.innerHTML = suggestionsHtml;
+    suggestionsBox.style.display = 'block';
 }
 
+// Select exercise from suggestions
 function selectExercise(exerciseName, exerciseId) {
-    const input = document.querySelector(`#exercise-${exerciseId} .exercise-name-input`);
-    const suggestionsDiv = document.getElementById(`suggestions-${exerciseId}`);
+    const input = document.querySelector(`#exercise-${exerciseId} input[name*="[name]"]`);
+    const suggestionsBox = document.getElementById(`suggestions-${exerciseId}`);
     
     input.value = exerciseName;
-    suggestionsDiv.style.display = 'none';
+    suggestionsBox.style.display = 'none';
 }
 
 // Hide suggestions when clicking outside
 document.addEventListener('click', function(event) {
-    const suggestions = document.querySelectorAll('.exercise-suggestions');
-    suggestions.forEach(suggestion => {
-        if (!suggestion.contains(event.target) && !event.target.classList.contains('exercise-name-input')) {
-            suggestion.style.display = 'none';
-        }
-    });
+    if (!event.target.matches('.form-control')) {
+        document.querySelectorAll('.suggestions-box').forEach(box => {
+            box.style.display = 'none';
+        });
+    }
 });
 
-// Add first exercise by default
+// Add first exercise when page loads
 document.addEventListener('DOMContentLoaded', function() {
     addExercise();
 });

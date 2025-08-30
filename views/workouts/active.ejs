@@ -1,19 +1,130 @@
 <% layout('layouts/boilerplate') %>
 
 <div class="container my-4">
-    <div class="workout-timer-container">
-        <%- include('../partials/timer-display', { workout }) %>
-        <%- include('../partials/current-exercise') %>
-        <%- include('../partials/exercise-list', { exercises: workout.exercises }) %>
+    <!-- Workout header -->
+    <div class="text-center mb-4">
+        <h2><%= workout.name %></h2>
+        <p class="text-muted">Active Workout Session</p>
     </div>
 
-    <form id="completeForm" action="/workouts/<%= workout._id %>/complete" method="POST" style="display: none;">
-        <input type="hidden" name="totalTime" id="totalTimeInput">
-    </form>
+    <div class="row">
+        <!-- Timer and controls -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <!-- Main timer -->
+                    <h1 class="display-4 text-primary mb-3" id="workoutTimer">00:00</h1>
+                    
+                    <!-- Control buttons -->
+                    <div class="d-flex justify-content-center gap-2 mb-3">
+                        <button id="startBtn" class="btn btn-success">Start</button>
+                        <button id="pauseBtn" class="btn btn-warning" disabled>Pause</button>
+                        <button id="resetBtn" class="btn btn-secondary">Reset</button>
+                    </div>
+                    
+                    <!-- Progress bar -->
+                    <div class="progress mb-3">
+                        <div id="exerciseProgress" class="progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Current exercise -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 id="currentExerciseName">Ready to start</h5>
+                </div>
+                <div class="card-body">
+                    <div id="exerciseInfo">
+                        <p>Click Start to begin your workout!</p>
+                    </div>
+                    
+                    <!-- Rest timer (hidden by default) -->
+                    <div id="restTimer" style="display: none;">
+                        <div class="text-center">
+                            <h4 class="text-warning">Rest Time</h4>
+                            <h2 id="restTimeDisplay" class="text-warning">60</h2>
+                            <button class="btn btn-sm btn-outline-primary" onclick="finishRest()">
+                                Skip Rest
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Exercise list -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Workout Plan</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <% workout.exercises.forEach((exercise, index) => { %>
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="exercise-card card h-100" id="exercise-card-<%= index %>">
+                                    <div class="card-body">
+                                        <h6 class="card-title"><%= index + 1 %>. <%= exercise.name %></h6>
+                                        <div class="small">
+                                            <div><strong><%= exercise.sets %></strong> sets × <strong><%= exercise.reps %></strong> reps</div>
+                                            <% if (exercise.weight > 0) { %>
+                                                <div>Weight: <strong><%= exercise.weight %>kg</strong></div>
+                                            <% } %>
+                                            <div>Rest: <strong><%= exercise.restTime %>s</strong></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- Hidden form to complete workout -->
+<form id="completeForm" action="/workouts/<%= workout._id %>/complete" method="POST" style="display: none;">
+    <input type="hidden" name="totalTime" id="totalTimeInput">
+</form>
+
+<!-- Add some CSS for exercise states -->
+<style>
+.exercise-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.exercise-card.active {
+    border-color: #28a745;
+    background-color: #d4edda;
+}
+
+.exercise-card.completed {
+    border-color: #6c757d;
+    background-color: #f8f9fa;
+    opacity: 0.7;
+}
+
+.exercise-card.completed .card-title {
+    text-decoration: line-through;
+}
+
+#restTimer {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    border-radius: 10px;
+    padding: 20px;
+    border: 2px dashed #ffc107;
+}
+</style>
+
+<!-- Pass workout data to JavaScript -->
 <script>
     const workout = <%- JSON.stringify(workout) %>;
 </script>
-
-<% additionalJS = ['/js/workout-timer.js'] %>
+<script src="/js/workout-timer.js"></script>

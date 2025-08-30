@@ -1,88 +1,95 @@
+// Timer variables
 let workoutTimer = null;
 let restTimer = null;
 let totalSeconds = 0;
-let currentExerciseIndex = 0;
+let currentExercise = 0;
 let currentSet = 1;
 let isResting = false;
 let isPaused = false;
 
+// Get DOM elements
 const startBtn = document.getElementById('startBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const resetBtn = document.getElementById('resetBtn');
-const completeBtn = document.getElementById('completeBtn');
 const timerDisplay = document.getElementById('workoutTimer');
-const currentExerciseName = document.getElementById('currentExerciseName');
+const exerciseName = document.getElementById('currentExerciseName');
 const exerciseInfo = document.getElementById('exerciseInfo');
-const restTimerDiv = document.getElementById('restTimer');
-const restTimeDisplay = document.getElementById('restTimeDisplay');
+const restDisplay = document.getElementById('restTimer');
+const restTimeLeft = document.getElementById('restTimeDisplay');
 const progressBar = document.getElementById('exerciseProgress');
 
+// Start the workout
 function startWorkout() {
     if (isPaused) {
+        // Resume paused workout
         resumeWorkout();
         return;
     }
     
+    // Start main timer
     workoutTimer = setInterval(() => {
         totalSeconds++;
-        updateTimerDisplay();
+        updateTimer();
     }, 1000);
     
+    // Update buttons
     startBtn.disabled = true;
     pauseBtn.disabled = false;
     
+    // Show first exercise
     if (workout.exercises.length > 0) {
         showCurrentExercise();
     }
 }
 
+// Pause the workout
 function pauseWorkout() {
-    if (workoutTimer) {
-        clearInterval(workoutTimer);
-        workoutTimer = null;
-    }
-    if (restTimer) {
-        clearInterval(restTimer);
-        restTimer = null;
-    }
+    // Stop timers
+    if (workoutTimer) clearInterval(workoutTimer);
+    if (restTimer) clearInterval(restTimer);
     
+    workoutTimer = null;
+    restTimer = null;
     isPaused = true;
+    
+    // Update buttons
     startBtn.disabled = false;
     pauseBtn.disabled = true;
     startBtn.textContent = 'Resume';
 }
 
+// Resume paused workout
 function resumeWorkout() {
     startWorkout();
     isPaused = false;
     startBtn.textContent = 'Start';
 }
 
+// Reset workout to beginning
 function resetWorkout() {
-    if (workoutTimer) {
-        clearInterval(workoutTimer);
-        workoutTimer = null;
-    }
-    if (restTimer) {
-        clearInterval(restTimer);
-        restTimer = null;
-    }
+    // Stop all timers
+    if (workoutTimer) clearInterval(workoutTimer);
+    if (restTimer) clearInterval(restTimer);
     
+    // Reset variables
+    workoutTimer = null;
+    restTimer = null;
     totalSeconds = 0;
-    currentExerciseIndex = 0;
+    currentExercise = 0;
     currentSet = 1;
     isResting = false;
     isPaused = false;
     
-    updateTimerDisplay();
+    // Reset display
+    updateTimer();
     startBtn.disabled = false;
     pauseBtn.disabled = true;
     startBtn.textContent = 'Start';
     
-    currentExerciseName.textContent = 'Ready to start';
-    exerciseInfo.innerHTML = '<p class="mb-1">Get ready to start your workout!</p>';
-    restTimerDiv.style.display = 'none';
-    updateProgressBar(0);
+    exerciseName.textContent = 'Ready to start';
+    exerciseInfo.innerHTML = '<p>Click Start to begin your workout!</p>';
+    restDisplay.style.display = 'none';
+    updateProgress(0);
     
     // Reset exercise cards
     document.querySelectorAll('.exercise-card').forEach(card => {
@@ -90,51 +97,57 @@ function resetWorkout() {
     });
 }
 
-function updateTimerDisplay() {
+// Update timer display
+function updateTimer() {
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    timerDisplay.textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
+// Show current exercise info
 function showCurrentExercise() {
-    if (currentExerciseIndex >= workout.exercises.length) {
-        completeWorkout();
+    // Check if workout is done
+    if (currentExercise >= workout.exercises.length) {
+        finishWorkout();
         return;
     }
     
-    const exercise = workout.exercises[currentExerciseIndex];
-    currentExerciseName.textContent = exercise.name;
+    const exercise = workout.exercises[currentExercise];
+    exerciseName.textContent = exercise.name;
     
-    // Update exercise cards
-    document.querySelectorAll('.exercise-card').forEach((card, index) => {
-        card.classList.remove('active', 'completed');
-        if (index === currentExerciseIndex) {
-            card.classList.add('active');
-        } else if (index < currentExerciseIndex) {
-            card.classList.add('completed');
-        }
-    });
+    // Update exercise cards visual state
+    updateExerciseCards();
     
     if (isResting) {
-        showRestTimer(exercise.restTime);
+        startRestTimer(exercise.restTime);
     } else {
-        exerciseInfo.innerHTML = `
-            <p class="mb-1"><strong>Set ${currentSet} of ${exercise.sets}</strong></p>
-            <p class="mb-1">${exercise.reps} reps ${exercise.weight > 0 ? '@ ' + exercise.weight + 'kg' : ''}</p>
-            <button class="btn btn-success" onclick="completeSet()">Set Complete</button>
-        `;
-        restTimerDiv.style.display = 'none';
+        showExerciseDetails(exercise);
     }
     
-    updateProgressBar();
+    updateProgress();
 }
 
-function completeSet() {
-    const exercise = workout.exercises[currentExerciseIndex];
+// Show exercise details (sets, reps, weight)
+function showExerciseDetails(exercise) {
+    const weightText = exercise.weight > 0 ? ` @ ${exercise.weight}kg` : '';
+    
+    exerciseInfo.innerHTML = `
+        <p><strong>Set ${currentSet} of ${exercise.sets}</strong></p>
+        <p>${exercise.reps} reps${weightText}</p>
+        <button class="btn btn-success" onclick="finishSet()">Complete Set</button>
+    `;
+    
+    restDisplay.style.display = 'none';
+}
+
+// Complete current set
+function finishSet() {
+    const exercise = workout.exercises[currentExercise];
     
     if (currentSet >= exercise.sets) {
         // Move to next exercise
-        currentExerciseIndex++;
+        currentExercise++;
         currentSet = 1;
         showCurrentExercise();
     } else {
@@ -145,23 +158,25 @@ function completeSet() {
     }
 }
 
-function showRestTimer(restTime) {
+// Start rest timer between sets
+function startRestTimer(restTime) {
     let timeLeft = restTime;
-    restTimeDisplay.textContent = timeLeft;
-    restTimerDiv.style.display = 'block';
-    exerciseInfo.innerHTML = '<p class="mb-1">Rest between sets</p>';
+    restTimeLeft.textContent = timeLeft;
+    restDisplay.style.display = 'block';
+    exerciseInfo.innerHTML = '<p>Rest between sets</p>';
     
     restTimer = setInterval(() => {
         timeLeft--;
-        restTimeDisplay.textContent = timeLeft;
+        restTimeLeft.textContent = timeLeft;
         
         if (timeLeft <= 0) {
-            skipRest();
+            finishRest();
         }
     }, 1000);
 }
 
-function skipRest() {
+// Finish rest period
+function finishRest() {
     if (restTimer) {
         clearInterval(restTimer);
         restTimer = null;
@@ -171,41 +186,56 @@ function skipRest() {
     showCurrentExercise();
 }
 
-function updateProgressBar() {
+// Update exercise cards visual state
+function updateExerciseCards() {
+    document.querySelectorAll('.exercise-card').forEach((card, index) => {
+        card.classList.remove('active', 'completed');
+        
+        if (index === currentExercise) {
+            card.classList.add('active');
+        } else if (index < currentExercise) {
+            card.classList.add('completed');
+        }
+    });
+}
+
+// Update progress bar
+function updateProgress() {
     if (workout.exercises.length === 0) return;
     
-    const totalSets = workout.exercises.reduce((sum, ex) => sum + ex.sets, 0);
-    const completedSets = workout.exercises.slice(0, currentExerciseIndex)
-        .reduce((sum, ex) => sum + ex.sets, 0) + (currentSet - 1);
+    const totalSets = workout.exercises.reduce((total, ex) => total + ex.sets, 0);
+    const completedSets = workout.exercises.slice(0, currentExercise)
+        .reduce((total, ex) => total + ex.sets, 0) + (currentSet - 1);
     
     const progress = (completedSets / totalSets) * 100;
     progressBar.style.width = progress + '%';
 }
 
-function completeWorkout() {
-    if (workoutTimer) {
-        clearInterval(workoutTimer);
-    }
-    if (restTimer) {
-        clearInterval(restTimer);
-    }
+// Finish the entire workout
+function finishWorkout() {
+    // Stop all timers
+    if (workoutTimer) clearInterval(workoutTimer);
+    if (restTimer) clearInterval(restTimer);
     
+    // Set total time in hidden form
     document.getElementById('totalTimeInput').value = totalSeconds;
     
-    if (confirm('Are you sure you want to complete this workout?')) {
+    // Ask user to confirm
+    if (confirm('Workout complete! Save your progress?')) {
         document.getElementById('completeForm').submit();
     }
 }
 
-// Event listeners
-startBtn.addEventListener('click', startWorkout);
-pauseBtn.addEventListener('click', pauseWorkout);
-resetBtn.addEventListener('click', resetWorkout);
-
-// Initialize
+// Set up button events
 document.addEventListener('DOMContentLoaded', function() {
-    updateTimerDisplay();
+    // Button clicks
+    startBtn.addEventListener('click', startWorkout);
+    pauseBtn.addEventListener('click', pauseWorkout);
+    resetBtn.addEventListener('click', resetWorkout);
+    
+    // Initialize display
+    updateTimer();
     if (workout.exercises.length > 0) {
-        updateProgressBar();
+        updateProgress();
     }
 });
