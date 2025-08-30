@@ -8,32 +8,27 @@
                     <h3 class="text-center">Login</h3>
                 </div>
                 <div class="card-body">
-                    <%- include('../partials/alerts') %>
+                    <!-- Show error message if any -->
+                    <% if (locals.error) { %>
+                        <div class="alert alert-danger"><%= error %></div>
+                    <% } %>
                     
-                    <form action="/auth/login" method="POST" class="needs-validation" novalidate>
+                    <form action="/auth/login" method="POST">
+                        <!-- Email -->
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control <%= locals.error && locals.error.includes('email') ? 'is-invalid' : '' %>" 
-                                   id="email" name="email" value="<%= locals.formData && formData.email ? formData.email : '' %>" required>
-                            <% if (locals.error && locals.error.includes('email')) { %>
-                                <div class="invalid-feedback"><%= error %></div>
-                            <% } %>
-                            <div class="invalid-feedback">
-                                Email required! 
-                            </div>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="<%= locals.email || '' %>" required>
                         </div>
+                        
+                        <!-- Password -->
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control <%= locals.error && locals.error.includes('password') ? 'is-invalid' : '' %>" 
-                                   id="password" name="password" required>
-                            <% if (locals.error && locals.error.includes('password')) { %>
-                                <div class="invalid-feedback"><%= error %></div>
-                            <% } %>
-                            <div class="invalid-feedback">
-                                Password required! 
-                            </div>
+                            <input type="password" class="form-control" id="password" name="password" required>
                         </div>
-                        <button type="submit" class="btn border-none w-100">Login</button>
+                        
+                        <!-- Submit -->
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
                     </form>
                     
                     <div class="text-center mt-3">

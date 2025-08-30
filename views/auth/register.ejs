@@ -8,47 +8,39 @@
                     <h3 class="text-center">Sign Up</h3>
                 </div>
                 <div class="card-body">
-                    <%- include('../partials/alerts') %>
+                    <!-- Show error message if any -->
+                    <% if (locals.error) { %>
+                        <div class="alert alert-danger"><%= error %></div>
+                    <% } %>
                     
-                    <form action="/auth/register" method="POST" class="needs-validation" novalidate>
+                    <form action="/auth/register" method="POST">
+                        <!-- Username field -->
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control <%= locals.error && locals.error.includes('username') ? 'is-invalid' : '' %>" 
-                                   id="username" name="username" 
-                                   value="<%= locals.formData && formData.username ? formData.username : '' %>" required>
-                            <% if (locals.error && locals.error.includes('username')) { %>
-                                <div class="invalid-feedback"><%= error %></div>
-                            <% } %>
-                            <div class="invalid-feedback">
-                                Username required! 
-                            </div>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   value="<%= locals.username || '' %>" required>
                         </div>
+                        
+                        <!-- Email field -->
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control <%= locals.error && locals.error.includes('email') ? 'is-invalid' : '' %>" 
-                                   id="email" name="email" 
-                                   value="<%= locals.formData && formData.email ? formData.email : '' %>" required>
-                            <% if (locals.error && locals.error.includes('email')) { %>
-                                <div class="invalid-feedback"><%= error %></div>
-                            <% } %>
-                            <div class="invalid-feedback">
-                                Email required! 
-                            </div>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="<%= locals.email || '' %>" required>
                         </div>
+                        
+                        <!-- Password field -->
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control <%= locals.error && locals.error.includes('password') ? 'is-invalid' : '' %>" 
-                                   id="password" name="password" minlength="6" required>
-                            <% if (locals.error && locals.error.includes('password')) { %>
-                                <div class="invalid-feedback"><%= error %></div>
-                            <% } %>
-                            <div class="invalid-feedback">
-                                Password required! 
-                            </div>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   minlength="6" required>
+                            <small class="text-muted">Password must be at least 6 characters</small>
                         </div>
-                        <button type="submit" class="btn border-none w-100">Sign Up</button>
+                        
+                        <!-- Submit button -->
+                        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
                     </form>
                     
+                    <!-- Link to login -->
                     <div class="text-center mt-3">
                         <p>Already have an account? <a href="/auth/login">Login</a></p>
                     </div>

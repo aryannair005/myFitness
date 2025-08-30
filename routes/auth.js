@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const { authValidation, validate } = require('../middleware/validation');
+const { validateLogin, validateRegister } = require('../middleware/validation');
 const authController = require('../controllers/authController');
 
+// Show login and register pages
 router.get('/login', authController.getLogin);
 router.get('/register', authController.getRegister);
 
-router.post('/login', validate(authValidation.login), authController.postLogin);
-router.post('/register', validate(authValidation.register), authController.postRegister);
+// Handle login and register forms
+router.post('/login', validateLogin, authController.postLogin);
+router.post('/register', validateRegister, authController.postRegister);
 
+// Handle logout
 router.post('/logout', authController.logout);
 
 module.exports = router;
